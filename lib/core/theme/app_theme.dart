@@ -73,6 +73,10 @@ class AppTheme {
         borderRadius: BorderRadius.circular(14),
         borderSide: const BorderSide(color: primaryColor, width: 1.5),
       ),
+      hintStyle: TextStyle(
+        color: Colors.grey.withValues(alpha: 0.6),
+        fontSize: 14,
+      )
     ),
 
     dividerTheme: const DividerThemeData(
@@ -96,6 +100,11 @@ class AppTheme {
       titleMedium: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w600,
+        color: textPrimary,
+      ),
+      labelLarge: TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.w500,
         color: textPrimary,
       ),
       bodyMedium: TextStyle(
