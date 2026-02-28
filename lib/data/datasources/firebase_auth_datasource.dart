@@ -9,8 +9,7 @@ class FirebaseAuthDataSource {
     required String email,
     required String password,
   }) async {
-    final credential =
-    await _firebaseAuth.createUserWithEmailAndPassword(
+    final credential = await _firebaseAuth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
@@ -18,17 +17,17 @@ class FirebaseAuthDataSource {
     return credential.user!;
   }
 
-  Future<User> login({
-    required String email,
-    required String password,
-  }) async {
-    final credential =
-    await _firebaseAuth.signInWithEmailAndPassword(
+  Future<User> login({required String email, required String password}) async {
+    final credential = await _firebaseAuth.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
 
     return credential.user!;
+  }
+
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    await _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
   User? getCurrentUser() {

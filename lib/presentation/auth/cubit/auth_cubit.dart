@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:my_project/domain/usecases/forgot_password_usecase.dart';
 
 import '../../../domain/usecases/login_usecase.dart';
 import '../../../domain/usecases/register_usecase.dart';
@@ -8,9 +9,13 @@ import 'auth_state.dart';
 class AuthCubit extends Cubit<AuthState> {
   final LoginUseCase loginUseCase;
   final RegisterUseCase registerUseCase;
+  final ForgotPasswordUseCase forgotPasswordUseCase;
 
-  AuthCubit({required this.loginUseCase, required this.registerUseCase})
-    : super(AuthInitial());
+  AuthCubit({
+    required this.loginUseCase,
+    required this.registerUseCase,
+    required this.forgotPasswordUseCase,
+  }) : super(AuthInitial());
 
   Future<void> login({required String email, required String password}) async {
     try {
@@ -51,6 +56,24 @@ class AuthCubit extends Cubit<AuthState> {
       } else {
         emit(AuthError("Something went wrong. Please try again."));
       }
+    }
+  }
+
+  Future<void> forgotPassword({
+    required String email,
+  }) async {
+    if (state is AuthLoading) return;
+
+    try {
+      emit(AuthLoading());
+
+      await forgotPasswordUseCase(email: email);
+
+      emit(AuthPasswordResetSent());
+    } on FirebaseAuthException catch (e) {
+      emit(AuthError(_mapFirebaseError(e)));
+    } catch (_) {
+      emit(AuthError("Something went wrong. Please try again."));
     }
   }
 

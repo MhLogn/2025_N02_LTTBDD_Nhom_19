@@ -16,6 +16,8 @@ class AuthError extends AuthState {
   AuthError(this.message);
 }
 
+class AuthPasswordResetSent extends AuthState {}
+
 class AuthUnauthenticated extends AuthState {}
 
 class AuthRegisterSuccess extends AuthState {}

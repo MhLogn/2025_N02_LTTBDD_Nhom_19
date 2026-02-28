@@ -49,10 +49,14 @@ class AuthRepositoryImpl implements AuthRepository {
       password: password,
     );
 
-    final user =
-    await userDataSource.getUser(firebaseUser.uid);
+    final user = await userDataSource.getUser(firebaseUser.uid);
 
     return user;
+  }
+
+  @override
+  Future<void> sendPasswordResetEmail({required String email}) {
+    return authDataSource.sendPasswordResetEmail(email: email);
   }
 
   @override
