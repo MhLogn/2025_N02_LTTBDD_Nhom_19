@@ -95,7 +95,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           if (state is AuthError) {
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
+            )
+              ..hideCurrentSnackBar()
+              ..showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {

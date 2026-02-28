@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../domain/usecases/login_usecase.dart';
 import '../../../domain/usecases/register_usecase.dart';
-import '../../../domain/entities/user_entity.dart';
 import 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
@@ -20,7 +20,11 @@ class AuthCubit extends Cubit<AuthState> {
 
       emit(AuthAuthenticated(user.id));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      if (e is FirebaseAuthException) {
+        emit(AuthError(_mapFirebaseError(e)));
+      } else {
+        emit(AuthError("Something went wrong. Please try again."));
+      }
     }
   }
 
@@ -33,7 +37,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoading());
 
-      final user = await registerUseCase(
+      await registerUseCase(
         fullName: fullName,
         username: username,
         email: email,
@@ -42,11 +46,38 @@ class AuthCubit extends Cubit<AuthState> {
 
       emit(AuthRegisterSuccess());
     } catch (e) {
-      emit(AuthError(e.toString()));
+      if (e is FirebaseAuthException) {
+        emit(AuthError(_mapFirebaseError(e)));
+      } else {
+        emit(AuthError("Something went wrong. Please try again."));
+      }
     }
   }
 
   void logout() {
     emit(AuthUnauthenticated());
+  }
+
+  String _mapFirebaseError(FirebaseAuthException e) {
+    switch (e.code) {
+      case 'invalid-email':
+        return 'The email address is not valid.';
+
+      case 'invalid-credential':
+      case 'invalid-login-credentials':
+        return 'Incorrect email or password.';
+
+      case 'email-already-in-use':
+        return 'This email is already in use.';
+
+      case 'too-many-requests':
+        return 'Too many attempts. Please try again later.';
+
+      case 'network-request-failed':
+        return 'Network error. Please check your connection.';
+
+      default:
+        return 'Authentication failed. Please try again.';
+    }
   }
 }
