@@ -45,5 +45,13 @@
    "auth_authenticationFailed": "Authentication failed. Please try again.",
    "auth_unknown": "Something went wrong. Please try again.",
    "fieldRequired": "This field is required",
-   "passwordRequired": "Password is required"
+   "passwordRequired": "Password is required",
+   "chooseLanguage": "Choose your language",
+   "continueText": "Continue",
+   "home": "Home",
+   "homeSubtitle": "You are logged in successfully",
+   "quickActions": "Quick Actions",
+   "profile": "Profile",
+   "settings": "Settings",
+   "loggedInSuccessfully": "You are logged in 🎉"
 }

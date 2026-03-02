@@ -153,4 +153,28 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get passwordRequired => 'Vui lòng nhập mật khẩu';
+
+  @override
+  String get chooseLanguage => 'Chọn ngôn ngữ';
+
+  @override
+  String get continueText => 'Tiếp tục';
+
+  @override
+  String get home => 'Trang chủ';
+
+  @override
+  String get homeSubtitle => 'Bạn đã đăng nhập thành công';
+
+  @override
+  String get quickActions => 'Thao tác nhanh';
+
+  @override
+  String get profile => 'Hồ sơ';
+
+  @override
+  String get settings => 'Cài đặt';
+
+  @override
+  String get loggedInSuccessfully => 'Bạn đã đăng nhập 🎉';
 }

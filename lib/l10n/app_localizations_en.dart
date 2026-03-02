@@ -155,4 +155,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordRequired => 'Password is required';
+
+  @override
+  String get chooseLanguage => 'Choose your language';
+
+  @override
+  String get continueText => 'Continue';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get homeSubtitle => 'You are logged in successfully';
+
+  @override
+  String get quickActions => 'Quick Actions';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get loggedInSuccessfully => 'You are logged in 🎉';
 }

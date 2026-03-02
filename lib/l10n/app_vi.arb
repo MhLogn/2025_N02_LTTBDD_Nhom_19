@@ -45,5 +45,13 @@
    "auth_authenticationFailed": "Xác thực thất bại. Vui lòng thử lại.",
    "auth_unknown": "Đã xảy ra lỗi. Vui lòng thử lại.",
    "fieldRequired": "Vui lòng nhập thông tin",
-   "passwordRequired": "Vui lòng nhập mật khẩu"
+   "passwordRequired": "Vui lòng nhập mật khẩu",
+   "chooseLanguage": "Chọn ngôn ngữ",
+   "continueText": "Tiếp tục",
+   "home": "Trang chủ",
+   "homeSubtitle": "Bạn đã đăng nhập thành công",
+   "quickActions": "Thao tác nhanh",
+   "profile": "Hồ sơ",
+   "settings": "Cài đặt",
+   "loggedInSuccessfully": "Bạn đã đăng nhập 🎉"
 }
