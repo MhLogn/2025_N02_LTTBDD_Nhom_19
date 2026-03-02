@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_project/l10n/app_localizations.dart';
 import 'onboarding_screen2.dart';
 
 class OnboardingScreen1 extends StatelessWidget {
@@ -7,6 +8,7 @@ class OnboardingScreen1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: SafeArea(
@@ -15,19 +17,16 @@ class OnboardingScreen1 extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                "assets/images/onboarding1.png",
-                height: 220,
-              ),
+              Image.asset("assets/images/onboarding1.png", height: 220),
               const SizedBox(height: 50),
               Text(
-                "Connect Instantly",
+                loc.onboarding1Title,
                 style: theme.textTheme.headlineMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               Text(
-                "Chat with your friends in real-time anytime",
+                loc.onboarding1Description,
                 style: theme.textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
@@ -43,7 +42,7 @@ class OnboardingScreen1 extends StatelessWidget {
                       ),
                     );
                   },
-                  child: const Text("Next"),
+                  child: Text(loc.next),
                 ),
               ),
             ],

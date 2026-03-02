@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_project/l10n/app_localizations.dart';
 import 'package:my_project/presentation/auth/cubit/auth_cubit.dart';
 import 'package:my_project/presentation/auth/cubit/auth_state.dart';
+import 'package:my_project/presentation/auth/cubit/auth_error_type.dart';
 import 'package:my_project/presentation/screens/Auth/login_screen.dart';
-import 'package:my_project/presentation/screens/Home/home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -33,34 +34,46 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _register(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     final fullName = _fullNameController.text.trim();
     final username = _usernameController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
     final confirmPassword = _confirmPasswordController.text.trim();
 
-    if (fullName.isEmpty ||
-        username.isEmpty ||
-        email.isEmpty ||
-        password.isEmpty ||
-        confirmPassword.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Please fill all fields")));
+    if (fullName.isEmpty) {
+      _showError(context, l10n.fieldRequired);
       return;
     }
 
-    if (password != confirmPassword) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Passwords do not match")));
+    if (username.isEmpty) {
+      _showError(context, l10n.fieldRequired);
+      return;
+    }
+
+    if (email.isEmpty) {
+      _showError(context, l10n.enterEmailRequired);
+      return;
+    }
+
+    if (!_isValidEmail(email)) {
+      _showError(context, l10n.auth_invalidEmail);
+      return;
+    }
+
+    if (password.isEmpty) {
+      _showError(context, l10n.passwordRequired);
       return;
     }
 
     if (password.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Password must be at least 6 characters")),
-      );
+      _showError(context, l10n.passwordMinLength);
+      return;
+    }
+
+    if (password != confirmPassword) {
+      _showError(context, l10n.passwordNotMatch);
       return;
     }
 
@@ -72,19 +85,57 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
+  bool _isValidEmail(String email) {
+    final regex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    return regex.hasMatch(email);
+  }
+
+  void _showError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  String _mapAuthError(BuildContext context, AuthErrorType type) {
+    final l10n = AppLocalizations.of(context)!;
+
+    switch (type) {
+      case AuthErrorType.invalidEmail:
+        return l10n.auth_invalidEmail;
+
+      case AuthErrorType.emailAlreadyInUse:
+        return l10n.auth_emailAlreadyInUse;
+
+      case AuthErrorType.weakPassword:
+        return l10n.passwordMinLength;
+
+      case AuthErrorType.tooManyRequests:
+        return l10n.auth_tooManyRequests;
+
+      case AuthErrorType.networkError:
+        return l10n.auth_networkError;
+
+      case AuthErrorType.authenticationFailed:
+        return l10n.auth_authenticationFailed;
+
+      case AuthErrorType.unknown:
+        return l10n.auth_unknown;
+
+      default:
+        return l10n.auth_unknown;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthRegisterSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Register successful! Please login."),
-              ),
-            );
+            _showError(context, l10n.registerSuccess);
 
             Navigator.pushReplacement(
               context,
@@ -93,11 +144,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           }
 
           if (state is AuthError) {
-            ScaffoldMessenger.of(
-              context,
-            )
-              ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(state.message)));
+            _showError(context, _mapAuthError(context, state.type));
           }
         },
         builder: (context, state) {
@@ -115,60 +162,57 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: 40),
 
                     Text(
-                      "Create Account",
+                      l10n.createAccount,
                       style: theme.textTheme.headlineMedium,
                     ),
 
                     const SizedBox(height: 8),
 
                     Text(
-                      "Sign up to start messaging.",
+                      l10n.registerSubtitle,
                       style: theme.textTheme.bodyMedium,
                     ),
 
                     const SizedBox(height: 32),
 
-                    Text("Full Name", style: theme.textTheme.labelLarge),
+                    Text(l10n.fullName, style: theme.textTheme.labelLarge),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _fullNameController,
-                      decoration: const InputDecoration(
-                        hintText: "Enter your full name",
-                      ),
+                      decoration: InputDecoration(hintText: l10n.enterFullName),
                     ),
 
                     const SizedBox(height: 16),
 
-                    Text("Username", style: theme.textTheme.labelLarge),
+                    Text(l10n.username, style: theme.textTheme.labelLarge),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _usernameController,
-                      decoration: const InputDecoration(
-                        hintText: "Choose a username",
+                      decoration: InputDecoration(
+                        hintText: l10n.chooseUsername,
                       ),
                     ),
 
                     const SizedBox(height: 16),
 
-                    Text("Email", style: theme.textTheme.labelLarge),
+
+                    Text(l10n.email, style: theme.textTheme.labelLarge),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        hintText: "Enter your email",
-                      ),
+                      decoration: InputDecoration(hintText: l10n.enterEmail),
                     ),
 
                     const SizedBox(height: 16),
 
-                    Text("Password", style: theme.textTheme.labelLarge),
+                    Text(l10n.password, style: theme.textTheme.labelLarge),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
-                        hintText: "Create password",
+                        hintText: l10n.createPassword,
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscurePassword
@@ -186,13 +230,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     const SizedBox(height: 16),
 
-                    Text("Confirm Password", style: theme.textTheme.labelLarge),
+                    Text(
+                      l10n.confirmPassword,
+                      style: theme.textTheme.labelLarge,
+                    ),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _confirmPasswordController,
                       obscureText: _obscureConfirmPassword,
                       decoration: InputDecoration(
-                        hintText: "Re-enter password",
+                        hintText: l10n.reEnterPassword,
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscureConfirmPassword
@@ -215,7 +262,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () => _register(context),
-                        child: const Text("Register"),
+                        child: Text(l10n.register),
                       ),
                     ),
 
@@ -232,7 +279,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           );
                         },
                         child: Text(
-                          "Already have an account? Login",
+                          l10n.alreadyHaveAccount,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.primary,
                           ),

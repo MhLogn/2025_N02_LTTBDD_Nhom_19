@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_project/l10n/app_localizations.dart';
 import 'package:my_project/presentation/screens/Auth/login_screen.dart';
 import 'package:my_project/presentation/screens/Auth/register_screen.dart';
 
@@ -8,6 +9,7 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: SafeArea(
@@ -20,12 +22,12 @@ class AuthScreen extends StatelessWidget {
 
               const SizedBox(height: 30),
 
-              Text("Chat Box", style: theme.textTheme.headlineMedium),
+              Text(l10n.appName, style: theme.textTheme.headlineMedium),
 
               const SizedBox(height: 12),
 
               Text(
-                "Fast. Secure. Simple messaging.",
+                l10n.authTagline,
                 style: theme.textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
@@ -43,7 +45,7 @@ class AuthScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  child: const Text("Login"),
+                  child: Text(l10n.login),
                 ),
               ),
 
@@ -60,7 +62,7 @@ class AuthScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  child: const Text("Register"),
+                  child: Text(l10n.register),
                 ),
               ),
             ],

@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:my_project/domain/usecases/login_usecase.dart';
+import 'package:my_project/domain/usecases/register_usecase.dart';
 import 'package:my_project/domain/usecases/forgot_password_usecase.dart';
-
-import '../../../domain/usecases/login_usecase.dart';
-import '../../../domain/usecases/register_usecase.dart';
 import 'auth_state.dart';
+import 'auth_error_type.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   final LoginUseCase loginUseCase;
@@ -17,19 +17,25 @@ class AuthCubit extends Cubit<AuthState> {
     required this.forgotPasswordUseCase,
   }) : super(AuthInitial());
 
-  Future<void> login({required String email, required String password}) async {
-    try {
-      emit(AuthLoading());
+  Future<void> login({
+    required String email,
+    required String password,
+  }) async {
+    if (state is AuthLoading) return;
 
-      final user = await loginUseCase(email: email, password: password);
+    emit(AuthLoading());
+
+    try {
+      final user = await loginUseCase(
+        email: email,
+        password: password,
+      );
 
       emit(AuthAuthenticated(user.id));
-    } catch (e) {
-      if (e is FirebaseAuthException) {
-        emit(AuthError(_mapFirebaseError(e)));
-      } else {
-        emit(AuthError("Something went wrong. Please try again."));
-      }
+    } on FirebaseAuthException catch (e) {
+      emit(AuthError(_mapFirebaseError(e)));
+    } catch (_) {
+      emit(AuthError(AuthErrorType.unknown));
     }
   }
 
@@ -39,9 +45,11 @@ class AuthCubit extends Cubit<AuthState> {
     required String email,
     required String password,
   }) async {
-    try {
-      emit(AuthLoading());
+    if (state is AuthLoading) return;
 
+    emit(AuthLoading());
+
+    try {
       await registerUseCase(
         fullName: fullName,
         username: username,
@@ -50,12 +58,10 @@ class AuthCubit extends Cubit<AuthState> {
       );
 
       emit(AuthRegisterSuccess());
-    } catch (e) {
-      if (e is FirebaseAuthException) {
-        emit(AuthError(_mapFirebaseError(e)));
-      } else {
-        emit(AuthError("Something went wrong. Please try again."));
-      }
+    } on FirebaseAuthException catch (e) {
+      emit(AuthError(_mapFirebaseError(e)));
+    } catch (_) {
+      emit(AuthError(AuthErrorType.unknown));
     }
   }
 
@@ -64,43 +70,46 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     if (state is AuthLoading) return;
 
+    emit(AuthLoading());
+
     try {
-      emit(AuthLoading());
-
       await forgotPasswordUseCase(email: email);
-
       emit(AuthPasswordResetSent());
     } on FirebaseAuthException catch (e) {
       emit(AuthError(_mapFirebaseError(e)));
     } catch (_) {
-      emit(AuthError("Something went wrong. Please try again."));
+      emit(AuthError(AuthErrorType.unknown));
     }
   }
 
-  void logout() {
+  Future<void> logout() async {
+    await FirebaseAuth.instance.signOut();
     emit(AuthUnauthenticated());
   }
 
-  String _mapFirebaseError(FirebaseAuthException e) {
+  AuthErrorType _mapFirebaseError(FirebaseAuthException e) {
     switch (e.code) {
       case 'invalid-email':
-        return 'The email address is not valid.';
+        return AuthErrorType.invalidEmail;
 
       case 'invalid-credential':
       case 'invalid-login-credentials':
-        return 'Incorrect email or password.';
+        return AuthErrorType.wrongCredentials;
 
       case 'email-already-in-use':
-        return 'This email is already in use.';
+        return AuthErrorType.emailAlreadyInUse;
+
+      case 'weak-password':
+        return AuthErrorType.weakPassword;
 
       case 'too-many-requests':
-        return 'Too many attempts. Please try again later.';
+        return AuthErrorType.tooManyRequests;
 
       case 'network-request-failed':
-        return 'Network error. Please check your connection.';
+        return AuthErrorType.networkError;
 
       default:
-        return 'Authentication failed. Please try again.';
+        return AuthErrorType.authenticationFailed;
     }
   }
 }

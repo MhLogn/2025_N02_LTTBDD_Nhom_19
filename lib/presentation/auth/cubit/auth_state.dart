@@ -1,3 +1,5 @@
+import 'package:my_project/presentation/auth/cubit/auth_error_type.dart';
+
 abstract class AuthState {}
 
 class AuthInitial extends AuthState {}
@@ -11,9 +13,9 @@ class AuthAuthenticated extends AuthState {
 }
 
 class AuthError extends AuthState {
-  final String message;
+  final AuthErrorType type;
 
-  AuthError(this.message);
+  AuthError(this.type);
 }
 
 class AuthPasswordResetSent extends AuthState {}

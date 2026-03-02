@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_project/l10n/app_localizations.dart';
 import 'package:my_project/presentation/auth/cubit/auth_cubit.dart';
 import 'package:my_project/presentation/auth/cubit/auth_state.dart';
+import 'package:my_project/presentation/auth/cubit/auth_error_type.dart';
 import 'package:my_project/presentation/screens/Auth/forgotPassword_Screen.dart';
 import 'package:my_project/presentation/screens/Auth/register_screen.dart';
 import 'package:my_project/presentation/screens/Home/home_screen.dart';
@@ -16,7 +18,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
   bool _obscurePassword = true;
 
   @override
@@ -27,22 +28,73 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Please fill all fields")));
+    if (email.isEmpty) {
+      _showError(context, l10n.enterEmailRequired);
+      return;
+    }
+
+    if (!_isValidEmail(email)) {
+      _showError(context, l10n.auth_invalidEmail);
+      return;
+    }
+
+    if (password.isEmpty) {
+      _showError(context, l10n.passwordRequired);
       return;
     }
 
     context.read<AuthCubit>().login(email: email, password: password);
   }
 
+  bool _isValidEmail(String email) {
+    final regex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    return regex.hasMatch(email);
+  }
+
+  void _showError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  String _mapAuthError(BuildContext context, AuthErrorType type) {
+    final l10n = AppLocalizations.of(context)!;
+
+    switch (type) {
+      case AuthErrorType.invalidEmail:
+        return l10n.auth_invalidEmail;
+
+      case AuthErrorType.wrongCredentials:
+        return l10n.auth_wrongCredentials;
+
+      case AuthErrorType.emailAlreadyInUse:
+        return l10n.auth_emailAlreadyInUse;
+
+      case AuthErrorType.weakPassword:
+        return l10n.passwordMinLength;
+
+      case AuthErrorType.tooManyRequests:
+        return l10n.auth_tooManyRequests;
+
+      case AuthErrorType.networkError:
+        return l10n.auth_networkError;
+
+      case AuthErrorType.authenticationFailed:
+        return l10n.auth_authenticationFailed;
+
+      case AuthErrorType.unknown:
+        return l10n.auth_unknown;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: BlocConsumer<AuthCubit, AuthState>(
@@ -56,9 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
           }
 
           if (state is AuthError) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(state.message)));
+            _showError(context, _mapAuthError(context, state.type));
           }
         },
         builder: (context, state) {
@@ -75,36 +125,38 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     const SizedBox(height: 40),
 
-                    Text("Welcome Back", style: theme.textTheme.headlineMedium),
+                    Text(
+                      l10n.welcomeBack,
+                      style: theme.textTheme.headlineMedium,
+                    ),
 
                     const SizedBox(height: 8),
 
-                    Text(
-                      "Login to continue using the app.",
-                      style: theme.textTheme.bodyMedium,
-                    ),
+                    Text(l10n.loginSubtitle, style: theme.textTheme.bodyMedium),
 
                     const SizedBox(height: 32),
 
-                    Text("Email", style: theme.textTheme.labelLarge),
+                    Text(l10n.email, style: theme.textTheme.labelLarge),
+
                     const SizedBox(height: 8),
+
                     TextField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        hintText: "Enter your email",
-                      ),
+                      decoration: InputDecoration(hintText: l10n.enterEmail),
                     ),
 
                     const SizedBox(height: 16),
 
-                    Text("Password", style: theme.textTheme.labelLarge),
+                    Text(l10n.password, style: theme.textTheme.labelLarge),
+
                     const SizedBox(height: 8),
+
                     TextField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
-                        hintText: "Enter your password",
+                        hintText: l10n.enterPassword,
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscurePassword
@@ -134,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                         },
                         child: Text(
-                          "Forgot password?",
+                          l10n.forgotPassword,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.primary,
                           ),
@@ -148,7 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () => _login(context),
-                        child: const Text("Login"),
+                        child: Text(l10n.login),
                       ),
                     ),
 
@@ -165,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                         },
                         child: Text(
-                          "Don't have an account? Create one",
+                          l10n.dontHaveAccount,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.primary,
                           ),

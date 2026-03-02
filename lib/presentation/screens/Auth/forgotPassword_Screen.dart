@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_project/l10n/app_localizations.dart';
 import 'package:my_project/presentation/auth/cubit/auth_cubit.dart';
 import 'package:my_project/presentation/auth/cubit/auth_state.dart';
+import 'package:my_project/presentation/auth/cubit/auth_error_type.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  State<ForgotPasswordScreen> createState() =>
+      _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _ForgotPasswordScreenState
+    extends State<ForgotPasswordScreen> {
   final _emailController = TextEditingController();
 
   @override
@@ -20,114 +24,176 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   void _sendResetLink(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final email = _emailController.text.trim();
 
     if (email.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Please enter your email")));
+      _showError(context, l10n.enterEmailRequired);
+      return;
+    }
+
+    if (!_isValidEmail(email)) {
+      _showError(context, l10n.auth_invalidEmail);
       return;
     }
 
     context.read<AuthCubit>().forgotPassword(email: email);
   }
 
+  bool _isValidEmail(String email) {
+    final regex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    return regex.hasMatch(email);
+  }
+
+  void _showError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+  }
+
+  String _mapAuthError(
+      BuildContext context, AuthErrorType type) {
+    final l10n = AppLocalizations.of(context)!;
+
+    switch (type) {
+      case AuthErrorType.invalidEmail:
+        return l10n.auth_invalidEmail;
+
+      case AuthErrorType.tooManyRequests:
+        return l10n.auth_tooManyRequests;
+
+      case AuthErrorType.networkError:
+        return l10n.auth_networkError;
+
+      case AuthErrorType.authenticationFailed:
+        return l10n.auth_authenticationFailed;
+
+      case AuthErrorType.unknown:
+        return l10n.auth_unknown;
+
+      default:
+        return l10n.auth_unknown;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
-    return BlocConsumer<AuthCubit, AuthState>(
-      listenWhen: (previous, current) =>
-          previous.runtimeType != current.runtimeType,
-      listener: (context, state) {
-        if (state is AuthPasswordResetSent) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(
-                content: Text("If an account exists with this email, a password reset link has been sent."),
-              ),
+    return Scaffold(
+      body: BlocConsumer<AuthCubit, AuthState>(
+        listenWhen: (previous, current) =>
+        previous.runtimeType != current.runtimeType,
+        listener: (context, state) {
+          if (state is AuthPasswordResetSent) {
+            _showError(context, l10n.resetLinkSentMessage);
+            Navigator.pop(context);
+          }
+
+          if (state is AuthError) {
+            _showError(
+              context,
+              _mapAuthError(context, state.type),
             );
-
-          Navigator.pop(context);
-        }
-
-        if (state is AuthError) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(content: Text(state.message)));
-        }
-      },
-      builder: (context, state) {
-        return Scaffold(
-          body: SafeArea(
+          }
+        },
+        builder: (context, state) {
+          return SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding:
+              const EdgeInsets.symmetric(horizontal: 24),
               child: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                  CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 60),
+
                     Text(
-                      "Forgot Password",
-                      style: theme.textTheme.headlineMedium,
+                      l10n.forgotPasswordTitle,
+                      style:
+                      theme.textTheme.headlineMedium,
                     ),
+
                     const SizedBox(height: 8),
+
                     Text(
-                      "Enter your email to receive a password reset link.",
-                      style: theme.textTheme.bodyMedium,
+                      l10n.forgotPasswordSubtitle,
+                      style:
+                      theme.textTheme.bodyMedium,
                     ),
+
                     const SizedBox(height: 32),
-                    Text("Email", style: theme.textTheme.labelLarge),
+
+                    Text(
+                      l10n.email,
+                      style: theme.textTheme.labelLarge,
+                    ),
+
                     const SizedBox(height: 8),
+
                     TextField(
                       controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        hintText: "Enter your email",
+                      keyboardType:
+                      TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        hintText: l10n.enterEmail,
                       ),
                     ),
+
                     const SizedBox(height: 32),
+
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: state is AuthLoading
                             ? null
-                            : () => _sendResetLink(context),
+                            : () =>
+                            _sendResetLink(context),
                         child: state is AuthLoading
                             ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : const Text("Send Reset Link"),
+                          height: 20,
+                          width: 20,
+                          child:
+                          CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                            : Text(l10n.sendResetLink),
                       ),
                     ),
+
                     const SizedBox(height: 24),
+
                     Center(
                       child: GestureDetector(
                         onTap: () {
                           Navigator.pop(context);
                         },
                         child: Text(
-                          "Back to Login",
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.primary,
+                          l10n.backToLogin,
+                          style:
+                          theme.textTheme.bodySmall
+                              ?.copyWith(
+                            color: theme
+                                .colorScheme.primary,
                           ),
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 24),
                   ],
                 ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_project/l10n/app_localizations.dart';
 import 'package:my_project/presentation/screens/Auth/auth_screen.dart';
 
 class OnboardingScreen2 extends StatelessWidget {
@@ -7,6 +8,7 @@ class OnboardingScreen2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: SafeArea(
@@ -15,19 +17,16 @@ class OnboardingScreen2 extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                "assets/images/onboarding2.png",
-                height: 220,
-              ),
+              Image.asset("assets/images/onboarding2.png", height: 220),
               const SizedBox(height: 50),
               Text(
-                "Simple & Secure",
+                l10n.simpleSecureTitle,
                 style: theme.textTheme.headlineMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               Text(
-                "Your conversations are private and protected with modern security",
+                l10n.simpleSecureSubtitle,
                 style: theme.textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
@@ -38,12 +37,10 @@ class OnboardingScreen2 extends StatelessWidget {
                   onPressed: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const AuthScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const AuthScreen()),
                     );
                   },
-                  child: const Text("Get Started"),
+                  child: Text(l10n.getStarted),
                 ),
               ),
             ],
