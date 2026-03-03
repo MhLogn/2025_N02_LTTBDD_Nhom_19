@@ -30,6 +30,10 @@ class FirebaseAuthDataSource {
     await _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
+  Future<void> logout() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
   User? getCurrentUser() {
     return _firebaseAuth.currentUser;
   }

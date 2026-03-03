@@ -49,9 +49,19 @@
    "chooseLanguage": "Chọn ngôn ngữ",
    "continueText": "Tiếp tục",
    "home": "Trang chủ",
-   "homeSubtitle": "Bạn đã đăng nhập thành công",
-   "quickActions": "Thao tác nhanh",
-   "profile": "Hồ sơ",
+   "profile": "Trang cá nhân",
    "settings": "Cài đặt",
-   "loggedInSuccessfully": "Bạn đã đăng nhập 🎉"
+    "noUsersFound": "Không tìm thấy người dùng",
+    "online": "Đang hoạt động",
+    "minutesAgo": "{minutes}p",
+    "@minutesAgo": {
+      "placeholders": {
+        "minutes": {}
+      }
+    },
+    "changeLanguage": "Đổi ngôn ngữ",
+    "selectLanguage": "Chọn ngôn ngữ",
+    "logout": "Đăng xuất",
+    "logoutConfirm": "Bạn có chắc muốn đăng xuất không?",
+    "cancel": "Hủy"
 }

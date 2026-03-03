@@ -49,9 +49,19 @@
    "chooseLanguage": "Choose your language",
    "continueText": "Continue",
    "home": "Home",
-   "homeSubtitle": "You are logged in successfully",
-   "quickActions": "Quick Actions",
    "profile": "Profile",
    "settings": "Settings",
-   "loggedInSuccessfully": "You are logged in 🎉"
+   "noUsersFound": "No users found",
+   "online": "Online",
+   "minutesAgo": "{minutes}m",
+   "@minutesAgo": {
+     "placeholders": {
+       "minutes": {}
+     }
+   },
+   "changeLanguage": "Change Language",
+   "selectLanguage": "Select Language",
+   "logout": "Logout",
+   "logoutConfirm": "Are you sure you want to logout?",
+   "cancel": "Cancel"
 }

@@ -6,7 +6,7 @@ import 'package:my_project/presentation/auth/cubit/auth_state.dart';
 import 'package:my_project/presentation/auth/cubit/auth_error_type.dart';
 import 'package:my_project/presentation/screens/Auth/forgotPassword_Screen.dart';
 import 'package:my_project/presentation/screens/Auth/register_screen.dart';
-import 'package:my_project/presentation/screens/Home/home_screen.dart';
+import 'package:my_project/presentation/screens/Home/main_navigation.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -102,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
           if (state is AuthAuthenticated) {
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (_) => const HomeScreen()),
+              MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
               (route) => false,
             );
           }

@@ -10,6 +10,11 @@ abstract class AuthRepository {
     required String password,
   });
 
+  Future<void> updateUserAfterLogin(String uid);
+  Future<void> updateUserOffline(String uid);
+
+  Stream<List<UserEntity>> getAllUsers();
+
   Future<void> sendPasswordResetEmail({required String email});
 
   Future<void> logout();

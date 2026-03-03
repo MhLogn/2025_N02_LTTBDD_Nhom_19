@@ -164,17 +164,34 @@ class AppLocalizationsVi extends AppLocalizations {
   String get home => 'Trang chủ';
 
   @override
-  String get homeSubtitle => 'Bạn đã đăng nhập thành công';
-
-  @override
-  String get quickActions => 'Thao tác nhanh';
-
-  @override
-  String get profile => 'Hồ sơ';
+  String get profile => 'Trang cá nhân';
 
   @override
   String get settings => 'Cài đặt';
 
   @override
-  String get loggedInSuccessfully => 'Bạn đã đăng nhập 🎉';
+  String get noUsersFound => 'Không tìm thấy người dùng';
+
+  @override
+  String get online => 'Đang hoạt động';
+
+  @override
+  String minutesAgo(Object minutes) {
+    return '${minutes}p';
+  }
+
+  @override
+  String get changeLanguage => 'Đổi ngôn ngữ';
+
+  @override
+  String get selectLanguage => 'Chọn ngôn ngữ';
+
+  @override
+  String get logout => 'Đăng xuất';
+
+  @override
+  String get logoutConfirm => 'Bạn có chắc muốn đăng xuất không?';
+
+  @override
+  String get cancel => 'Hủy';
 }

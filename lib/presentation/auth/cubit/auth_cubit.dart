@@ -1,8 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:my_project/domain/usecases/login_usecase.dart';
+import 'package:my_project/domain/usecases/logout_usecase.dart';
 import 'package:my_project/domain/usecases/register_usecase.dart';
 import 'package:my_project/domain/usecases/forgot_password_usecase.dart';
+import 'package:my_project/domain/usecases/user_status_usecase.dart';
 import 'auth_state.dart';
 import 'auth_error_type.dart';
 
@@ -10,11 +12,15 @@ class AuthCubit extends Cubit<AuthState> {
   final LoginUseCase loginUseCase;
   final RegisterUseCase registerUseCase;
   final ForgotPasswordUseCase forgotPasswordUseCase;
+  final UpdateUserStatusUseCase updateUserStatusUseCase;
+  final LogoutUseCase logoutUseCase;
 
   AuthCubit({
     required this.loginUseCase,
     required this.registerUseCase,
     required this.forgotPasswordUseCase,
+    required this.updateUserStatusUseCase,
+    required this.logoutUseCase,
   }) : super(AuthInitial());
 
   Future<void> login({
@@ -30,6 +36,8 @@ class AuthCubit extends Cubit<AuthState> {
         email: email,
         password: password,
       );
+
+      await updateUserStatusUseCase(user.id, isOnline: true);
 
       emit(AuthAuthenticated(user.id));
     } on FirebaseAuthException catch (e) {
@@ -83,6 +91,12 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> logout() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser != null) {
+      await updateUserStatusUseCase(currentUser.uid, isOnline: false);
+    }
+
     await FirebaseAuth.instance.signOut();
     emit(AuthUnauthenticated());
   }

@@ -166,17 +166,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home => 'Home';
 
   @override
-  String get homeSubtitle => 'You are logged in successfully';
-
-  @override
-  String get quickActions => 'Quick Actions';
-
-  @override
   String get profile => 'Profile';
 
   @override
   String get settings => 'Settings';
 
   @override
-  String get loggedInSuccessfully => 'You are logged in 🎉';
+  String get noUsersFound => 'No users found';
+
+  @override
+  String get online => 'Online';
+
+  @override
+  String minutesAgo(Object minutes) {
+    return '${minutes}m';
+  }
+
+  @override
+  String get changeLanguage => 'Change Language';
+
+  @override
+  String get selectLanguage => 'Select Language';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get logoutConfirm => 'Are you sure you want to logout?';
+
+  @override
+  String get cancel => 'Cancel';
 }
