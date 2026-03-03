@@ -9,7 +9,8 @@ import 'package:my_project/core/di/injection.dart';
 import 'package:my_project/firebase_options.dart';
 
 import 'package:my_project/l10n/app_localizations.dart';
-import 'package:my_project/presentation/Chat/chat_cubit.dart';
+import 'package:my_project/presentation/Chat/chatRoom_cubit.dart';
+import 'package:my_project/presentation/Chat/chatList_cubit.dart';
 import 'package:my_project/presentation/language/locale_cubit.dart';
 import 'package:my_project/presentation/auth/cubit/auth_cubit.dart';
 import 'package:my_project/presentation/screens/splash_screen.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => LocaleCubit()),
         BlocProvider(create: (_) => sl<AuthCubit>()),
         BlocProvider(create: (_) => sl<ChatCubit>()),
+        BlocProvider(create: (_) => sl<ChatRoomCubit>()),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(
         builder: (context, locale) {

@@ -1,11 +1,16 @@
 import 'package:get_it/get_it.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:my_project/data/datasources/chat_firestore_datasources.dart';
+import 'package:my_project/data/repositories/chat_repository_impl.dart';
+import 'package:my_project/domain/repositories/chat_repository.dart';
+import 'package:my_project/domain/usecases/chatRoom_usecase.dart';
 import 'package:my_project/domain/usecases/forgot_password_usecase.dart';
 import 'package:my_project/domain/usecases/getUser_usecase.dart';
 import 'package:my_project/domain/usecases/logout_usecase.dart';
 import 'package:my_project/domain/usecases/user_status_usecase.dart';
-import 'package:my_project/presentation/Chat/chat_cubit.dart';
+import 'package:my_project/presentation/Chat/chatRoom_cubit.dart';
+import 'package:my_project/presentation/Chat/chatList_cubit.dart';
 
 import '../../data/datasources/firebase_auth_datasource.dart';
 import '../../data/datasources/user_firestore_datasource.dart';
@@ -30,9 +35,17 @@ Future<void> init() async {
 
   sl.registerLazySingleton(() => UserFirestoreDataSource(sl()));
 
+  sl.registerLazySingleton<ChatRoomFirestoreDataSource>(
+    () => ChatRoomFirestoreDataSource(FirebaseFirestore.instance),
+  );
+
   /// Repository
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(authDataSource: sl(), userDataSource: sl()),
+  );
+
+  sl.registerLazySingleton<ChatRoomRepository>(
+    () => ChatRoomRepositoryImpl(sl<ChatRoomFirestoreDataSource>()),
   );
 
   /// UseCases
@@ -48,6 +61,10 @@ Future<void> init() async {
 
   sl.registerLazySingleton(() => LogoutUseCase(sl()));
 
+  sl.registerLazySingleton(
+    () => CreateOrGetChatRoomUseCase(sl<ChatRoomRepository>(), sl<AuthRepository>()),
+  );
+
   /// AuthCubit
   sl.registerFactory(
     () => AuthCubit(
@@ -59,8 +76,9 @@ Future<void> init() async {
     ),
   );
 
-  /// ChatCubit
-  sl.registerFactory(
-      () => ChatCubit(sl())
-  );
+  /// ChatListCubit
+  sl.registerFactory(() => ChatCubit(sl()));
+
+  /// ChatRoomCubit
+  sl.registerFactory(() => ChatRoomCubit(sl()));
 }

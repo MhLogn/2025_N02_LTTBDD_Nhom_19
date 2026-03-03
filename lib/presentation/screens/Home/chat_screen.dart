@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_project/data/datasources/chat_firestore_datasources.dart';
+import 'package:my_project/core/di/injection.dart';
+import 'package:my_project/domain/repositories/auth_repository.dart';
 import 'package:my_project/l10n/app_localizations.dart';
-import 'package:my_project/presentation/Chat/chat_cubit.dart';
+import 'package:my_project/presentation/Chat/chatRoom_cubit.dart';
+import 'package:my_project/presentation/Chat/chatList_cubit.dart';
+import 'package:my_project/presentation/screens/Home/chatRoom_screen.dart';
 import '../../../domain/entities/user_entity.dart';
 
 class ChatListScreen extends StatefulWidget {
@@ -50,17 +55,38 @@ class _ChatListScreenState extends State<ChatListScreen> {
           return ListView.separated(
             padding: const EdgeInsets.symmetric(vertical: 8),
             itemCount: users.length,
-            separatorBuilder: (_, __) => Padding(
-              padding: const EdgeInsets.only(left: 80),
-              child: Divider(color: Colors.grey.shade300, height: 1),
-            ),
+            separatorBuilder: (_, __) =>
+                Padding(
+                  padding: const EdgeInsets.only(left: 80),
+                  child: Divider(color: Colors.grey.shade300, height: 1),
+                ),
             itemBuilder: (context, index) {
               final user = users[index];
               final isOnline = (user as dynamic).isOnline == true;
 
               return InkWell(
-                onTap: () {
-                  // TODO: Chat message
+                onTap: () async {
+                  final authRepo = sl<AuthRepository>();
+                  final currentUser = await authRepo.getCurrentUser();
+
+                  if (currentUser == null) return;
+
+                  final result = await context
+                      .read<ChatRoomCubit>()
+                      .createRoom(
+                      currentUser.id,
+                      user.id
+                  );
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          ChatRoomScreen(
+                            roomId: result.roomId,
+                          ),
+                    ),
+                  );
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -90,14 +116,14 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                   : null,
                               child: user.photoUrl == null
                                   ? Text(
-                                      user.fullName.isNotEmpty
-                                          ? user.fullName[0].toUpperCase()
-                                          : "?",
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    )
+                                user.fullName.isNotEmpty
+                                    ? user.fullName[0].toUpperCase()
+                                    : "?",
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
                                   : null,
                             ),
                           ),
