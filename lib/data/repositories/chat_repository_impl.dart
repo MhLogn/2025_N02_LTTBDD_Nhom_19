@@ -8,14 +8,8 @@ class ChatRoomRepositoryImpl implements ChatRoomRepository {
   ChatRoomRepositoryImpl(this.dataSource);
 
   @override
-  Future<String> createOrGetRoom(
-      String currentUserId,
-      String otherUserId,
-      ) {
-    return dataSource.createOrGetRoom(
-      currentUserId,
-      otherUserId,
-    );
+  Future<String> createOrGetRoom(String currentUserId, String otherUserId) {
+    return dataSource.createOrGetRoom(currentUserId, otherUserId);
   }
 
   @override
@@ -34,5 +28,10 @@ class ChatRoomRepositoryImpl implements ChatRoomRepository {
       senderId: senderId,
       content: content,
     );
+  }
+
+  @override
+  Future<void> resetUnreadCount(String roomId, String currentUserId) async {
+    return await dataSource.resetUnreadCount(roomId, currentUserId);
   }
 }

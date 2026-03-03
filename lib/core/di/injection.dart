@@ -10,6 +10,7 @@ import 'package:my_project/domain/usecases/getMessage_usecase.dart';
 import 'package:my_project/domain/usecases/getUser_usecase.dart';
 import 'package:my_project/domain/usecases/logout_usecase.dart';
 import 'package:my_project/domain/usecases/message_usecase.dart';
+import 'package:my_project/domain/usecases/resetUnread_usecase.dart';
 import 'package:my_project/domain/usecases/user_status_usecase.dart';
 import 'package:my_project/presentation/Chat/chatRoom_cubit.dart';
 import 'package:my_project/presentation/Chat/chatList_cubit.dart';
@@ -71,6 +72,7 @@ Future<void> init() async {
     ),
   );
 
+  sl.registerLazySingleton(() => ResetUnreadUseCase(sl()));
   sl.registerLazySingleton(() => SendMessageUseCase(sl(), sl()));
   sl.registerLazySingleton(() => GetMessagesUseCase(sl()));
 
@@ -89,8 +91,8 @@ Future<void> init() async {
   sl.registerFactory(() => ChatCubit(sl()));
 
   /// ChatRoomCubit
-  sl.registerFactory(() => ChatRoomCubit(sl()));
+  sl.registerFactory(() => ChatRoomCubit(sl(), sl()));
 
   /// MessageCubit
-  sl.registerFactory(() => MessageCubit(sl(),sl()));
+  sl.registerFactory(() => MessageCubit(sl(), sl()));
 }

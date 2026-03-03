@@ -73,7 +73,6 @@ class AuthRepositoryImpl implements AuthRepository {
         .doc(uid)
         .set({
       'isOnline': false,
-      'lastSeen': Timestamp.now(),
     }, SetOptions(merge: true));
   }
 

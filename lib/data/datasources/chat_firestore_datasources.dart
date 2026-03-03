@@ -24,6 +24,7 @@ class ChatRoomFirestoreDataSource {
         'members': sortedIds,
         'lastMessage': '',
         'lastMessageTime': Timestamp.now(),
+        'unreadCounts': {sortedIds[0]: 0, sortedIds[1]: 0},
       });
     }
 
@@ -49,24 +50,61 @@ class ChatRoomFirestoreDataSource {
     required String senderId,
     required String content,
   }) async {
-    final messageRef = firestore
+    final roomRef = firestore.collection('chat_rooms').doc(roomId);
+
+    final roomSnapshot = await roomRef.get();
+
+    final members = List<String>.from(roomSnapshot['members']);
+
+    final receiverId = members.firstWhere((id) => id != senderId);
+
+    final messageRef = roomRef.collection('messages').doc();
+
+    await firestore.runTransaction((transaction) async {
+      transaction.set(messageRef, {
+        'senderId': senderId,
+        'content': content,
+        'createdAt': Timestamp.now(),
+        'isRead': false,
+        'seenAt': null,
+      });
+
+      transaction.update(roomRef, {
+        'lastMessage': content,
+        'lastMessageTime': Timestamp.now(),
+        'unreadCounts.$receiverId': FieldValue.increment(1),
+      });
+    });
+  }
+
+  Future<void> resetUnreadCount(String roomId, String currentUserId) async {
+    await firestore.collection('chat_rooms').doc(roomId).update({
+      'unreadCounts.$currentUserId': 0,
+    });
+
+    await markMessagesAsSeen(roomId, currentUserId);
+  }
+
+  Future<void> markMessagesAsSeen(String roomId, String currentUserId) async {
+    final messagesRef = firestore
         .collection('chat_rooms')
         .doc(roomId)
-        .collection('messages')
-        .doc();
+        .collection('messages');
 
-    final message = MessageModel(
-      id: messageRef.id,
-      senderId: senderId,
-      content: content,
-      createdAt: DateTime.now(),
-    );
+    final snapshot = await messagesRef.where('isSeen', isEqualTo: false).get();
 
-    await messageRef.set(message.toMap());
+    final batch = firestore.batch();
 
-    await firestore.collection('chat_rooms').doc(roomId).update({
-      'lastMessage': content,
-      'lastMessageTime': Timestamp.now(),
-    });
+    for (var doc in snapshot.docs) {
+      final data = doc.data();
+      if (data['senderId'] != currentUserId) {
+        batch.update(doc.reference, {
+          'isSeen': true,
+          'seenAt': Timestamp.now(),
+        });
+      }
+    }
+
+    await batch.commit();
   }
 }

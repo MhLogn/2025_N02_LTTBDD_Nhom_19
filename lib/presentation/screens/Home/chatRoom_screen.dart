@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:my_project/presentation/screens/Home/message_screen.dart';
 import 'package:my_project/domain/entities/message_entity.dart';
 import 'package:my_project/presentation/Chat/message_cubit.dart';
+import 'package:my_project/presentation/Chat/chatRoom_cubit.dart';
+import 'package:my_project/presentation/screens/Home/message_screen.dart';
 
 class ChatRoomScreen extends StatefulWidget {
   final String roomId;
@@ -28,24 +29,24 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     super.initState();
 
     context.read<MessageCubit>().listenMessages(widget.roomId);
+
+    context.read<ChatRoomCubit>().resetUnread(
+      widget.roomId,
+      widget.currentUserId,
+    );
   }
 
   void _send() async {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
 
-    await context.read<MessageCubit>().sendMessage(
-      widget.roomId,
-      text,
-    );
+    await context.read<MessageCubit>().sendMessage(widget.roomId, text);
 
     _controller.clear();
 
     Future.delayed(const Duration(milliseconds: 150), () {
       if (_scrollController.hasClients) {
-        _scrollController.jumpTo(
-          _scrollController.position.maxScrollExtent,
-        );
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
       }
     });
   }
@@ -58,10 +59,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         backgroundColor: Colors.white,
         elevation: 0.5,
         iconTheme: const IconThemeData(color: Colors.black),
-        title: const Text(
-          "Chat",
-          style: TextStyle(color: Colors.black),
-        ),
+        title: const Text("Chat", style: TextStyle(color: Colors.black)),
       ),
       body: Column(
         children: [
@@ -77,19 +75,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     final message = messages[index];
-                    final isMe =
-                        message.senderId == widget.currentUserId;
+                    final isMe = message.senderId == widget.currentUserId;
 
-                    return MessageBubble(
-                      message: message,
-                      isMe: isMe,
-                    );
+                    return MessageBubble(message: message, isMe: isMe);
                   },
                 );
               },
             ),
           ),
-
           _buildInputBar(),
         ],
       ),
@@ -127,11 +120,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 color: Color(0xFF0088CC),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.send,
-                color: Colors.white,
-                size: 20,
-              ),
+              child: const Icon(Icons.send, color: Colors.white, size: 20),
             ),
           ),
         ],

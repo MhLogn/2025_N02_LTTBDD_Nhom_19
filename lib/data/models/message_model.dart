@@ -7,6 +7,8 @@ class MessageModel extends MessageEntity {
     required super.senderId,
     required super.content,
     required super.createdAt,
+    required super.isSeen,
+    super.seenAt,
   });
 
   factory MessageModel.fromSnapshot(DocumentSnapshot doc) {
@@ -17,6 +19,10 @@ class MessageModel extends MessageEntity {
       senderId: data['senderId'],
       content: data['content'],
       createdAt: (data['createdAt'] as Timestamp).toDate(),
+      isSeen: data['isSeen'] ?? false,
+      seenAt: data['seenAt'] != null
+          ? (data['seenAt'] as Timestamp).toDate()
+          : null,
     );
   }
 
@@ -25,6 +31,8 @@ class MessageModel extends MessageEntity {
       'senderId': senderId,
       'content': content,
       'createdAt': Timestamp.fromDate(createdAt),
+      'isSeen': isSeen,
+      'seenAt': seenAt != null ? Timestamp.fromDate(seenAt!) : null,
     };
   }
 }
