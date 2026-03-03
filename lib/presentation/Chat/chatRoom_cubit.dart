@@ -8,9 +8,8 @@ class ChatRoomCubit extends Cubit<void> {
   ChatRoomCubit(this.createRoomUseCase) : super(null);
 
   Future<ChatRoomResult> createRoom(
-    String currentUserId,
     String otherUserId,
   ) async {
-    return await createRoomUseCase(currentUserId, otherUserId);
+    return await createRoomUseCase(otherUserId);
   }
 }

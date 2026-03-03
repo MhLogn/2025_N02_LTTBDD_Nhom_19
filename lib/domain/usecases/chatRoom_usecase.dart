@@ -6,29 +6,24 @@ class CreateOrGetChatRoomUseCase {
   final ChatRoomRepository chatRoomRepository;
   final AuthRepository authRepository;
 
-  CreateOrGetChatRoomUseCase(
-      this.chatRoomRepository,
-      this.authRepository,
-      );
+  CreateOrGetChatRoomUseCase(this.chatRoomRepository, this.authRepository);
 
-  Future<ChatRoomResult> call(
-      String otherUserId,
-      String currentUserId,
-      ) async {
-
+  Future<ChatRoomResult> call(String otherUserId) async {
     final currentUser = await authRepository.getCurrentUser();
 
     if (currentUser == null) {
       throw Exception("User not logged in");
     }
 
-    final roomId = await chatRoomRepository.createOrGetRoom(currentUser.id, otherUserId);
+    // 🔥 tạo room bằng 2 id thật sự
+    final roomId = await chatRoomRepository.createOrGetRoom(
+      currentUser.id,
+      otherUserId,
+    );
 
     final users = await authRepository.getAllUsers().first;
 
-    final otherUser = users.firstWhere(
-          (user) => user.id == otherUserId,
-    );
+    final otherUser = users.firstWhere((user) => user.id == otherUserId);
 
     return ChatRoomResult(
       roomId: roomId,

@@ -6,11 +6,14 @@ import 'package:my_project/data/repositories/chat_repository_impl.dart';
 import 'package:my_project/domain/repositories/chat_repository.dart';
 import 'package:my_project/domain/usecases/chatRoom_usecase.dart';
 import 'package:my_project/domain/usecases/forgot_password_usecase.dart';
+import 'package:my_project/domain/usecases/getMessage_usecase.dart';
 import 'package:my_project/domain/usecases/getUser_usecase.dart';
 import 'package:my_project/domain/usecases/logout_usecase.dart';
+import 'package:my_project/domain/usecases/message_usecase.dart';
 import 'package:my_project/domain/usecases/user_status_usecase.dart';
 import 'package:my_project/presentation/Chat/chatRoom_cubit.dart';
 import 'package:my_project/presentation/Chat/chatList_cubit.dart';
+import 'package:my_project/presentation/Chat/message_cubit.dart';
 
 import '../../data/datasources/firebase_auth_datasource.dart';
 import '../../data/datasources/user_firestore_datasource.dart';
@@ -62,8 +65,14 @@ Future<void> init() async {
   sl.registerLazySingleton(() => LogoutUseCase(sl()));
 
   sl.registerLazySingleton(
-    () => CreateOrGetChatRoomUseCase(sl<ChatRoomRepository>(), sl<AuthRepository>()),
+    () => CreateOrGetChatRoomUseCase(
+      sl<ChatRoomRepository>(),
+      sl<AuthRepository>(),
+    ),
   );
+
+  sl.registerLazySingleton(() => SendMessageUseCase(sl(), sl()));
+  sl.registerLazySingleton(() => GetMessagesUseCase(sl()));
 
   /// AuthCubit
   sl.registerFactory(
@@ -81,4 +90,7 @@ Future<void> init() async {
 
   /// ChatRoomCubit
   sl.registerFactory(() => ChatRoomCubit(sl()));
+
+  /// MessageCubit
+  sl.registerFactory(() => MessageCubit(sl(),sl()));
 }

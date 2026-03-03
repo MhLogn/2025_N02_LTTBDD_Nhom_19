@@ -1,4 +1,5 @@
 import 'package:my_project/data/datasources/chat_firestore_datasources.dart';
+import 'package:my_project/data/models/message_model.dart';
 import 'package:my_project/domain/repositories/chat_repository.dart';
 
 class ChatRoomRepositoryImpl implements ChatRoomRepository {
@@ -14,6 +15,24 @@ class ChatRoomRepositoryImpl implements ChatRoomRepository {
     return dataSource.createOrGetRoom(
       currentUserId,
       otherUserId,
+    );
+  }
+
+  @override
+  Stream<List<MessageModel>> getMessages(String roomId) {
+    return dataSource.getMessages(roomId);
+  }
+
+  @override
+  Future<void> sendMessage({
+    required String roomId,
+    required String senderId,
+    required String content,
+  }) async {
+    return await dataSource.sendMessage(
+      roomId: roomId,
+      senderId: senderId,
+      content: content,
     );
   }
 }
