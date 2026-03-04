@@ -82,7 +82,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-
       body: BlocConsumer<AuthCubit, AuthState>(
         listenWhen: (previous, current) =>
             previous.runtimeType != current.runtimeType,
@@ -107,51 +106,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     const SizedBox(height: 60),
                     Text(
                       l10n.forgotPasswordTitle,
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: -0.5,
-                      ),
+                      style: theme.textTheme.headlineMedium,
                     ),
                     const SizedBox(height: 12),
                     Text(
                       l10n.forgotPasswordSubtitle,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: Colors.grey.shade600,
-                        height: 1.5,
-                      ),
+                      style: theme.textTheme.bodyLarge,
                     ),
                     const SizedBox(height: 48),
-                    Text(
-                      l10n.email,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    Text(l10n.email, style: theme.textTheme.titleSmall),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        hintText: l10n.enterEmail,
-                        hintStyle: TextStyle(color: Colors.grey.shade400),
-                        filled: true,
-                        fillColor: Colors.grey.shade50,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 18,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide(color: Colors.grey.shade200),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide(
-                            color: theme.colorScheme.primary,
-                            width: 2,
-                          ),
-                        ),
-                      ),
+                      decoration: InputDecoration(hintText: l10n.enterEmail),
                     ),
                     const SizedBox(height: 40),
                     SizedBox(
@@ -160,15 +128,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         onPressed: state is AuthLoading
                             ? null
                             : () => _sendResetLink(context),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 18),
-                          backgroundColor: theme.colorScheme.primary,
-                          foregroundColor: theme.colorScheme.onPrimary,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
                         child: state is AuthLoading
                             ? const SizedBox(
                                 height: 24,
@@ -178,13 +137,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   color: Colors.white,
                                 ),
                               )
-                            : Text(
-                                l10n.sendResetLink,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
+                            : Text(l10n.sendResetLink),
                       ),
                     ),
                     const SizedBox(height: 32),

@@ -11,7 +11,6 @@ class OnboardingScreen1 extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -27,29 +26,20 @@ class OnboardingScreen1 extends StatelessWidget {
                       fit: BoxFit.contain,
                     ),
                     const SizedBox(height: 48),
-
                     Text(
                       l10n.onboarding1Title,
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: -0.5,
-                      ),
+                      style: theme.textTheme.headlineMedium,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
-
                     Text(
                       l10n.onboarding1Description,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: Colors.grey.shade600,
-                        height: 1.5,
-                      ),
+                      style: theme.textTheme.bodyLarge,
                       textAlign: TextAlign.center,
                     ),
                   ],
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.only(bottom: 24.0),
                 child: SizedBox(
@@ -63,22 +53,7 @@ class OnboardingScreen1 extends StatelessWidget {
                         ),
                       );
                     },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 18),
-                      backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: theme.colorScheme.onPrimary,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: Text(
-                      l10n.next,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    child: Text(l10n.next),
                   ),
                 ),
               ),

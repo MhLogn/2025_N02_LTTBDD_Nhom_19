@@ -13,7 +13,6 @@ class LanguageSelectionScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -21,7 +20,6 @@ class LanguageSelectionScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 60),
-
               Center(
                 child: Container(
                   padding: const EdgeInsets.all(24),
@@ -37,23 +35,17 @@ class LanguageSelectionScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 40),
-
               Text(
                 l10n?.chooseLanguage ?? "Choose Language",
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.5,
-                ),
+                style: theme.textTheme.headlineMedium,
               ),
               const SizedBox(height: 8),
               Text(
-                l10n?.languageTitle ?? "Please select your preferred language to continue",
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey.shade600,
-                ),
+                l10n?.languageTitle ??
+                    "Please select your preferred language to continue",
+                style: theme.textTheme.bodyLarge,
               ),
               const SizedBox(height: 40),
-
               _buildLanguageTile(
                 context,
                 languageCode: 'en',
@@ -67,9 +59,7 @@ class LanguageSelectionScreen extends StatelessWidget {
                 title: 'Tiếng Việt',
                 emoji: '🇻🇳',
               ),
-
               const Spacer(),
-
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -81,22 +71,7 @@ class LanguageSelectionScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 18),
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: theme.colorScheme.onPrimary,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  child: Text(
-                    l10n?.continueText ?? "Continue",
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  child: Text(l10n?.continueText ?? "Continue"),
                 ),
               ),
               const SizedBox(height: 32),
@@ -107,14 +82,12 @@ class LanguageSelectionScreen extends StatelessWidget {
     );
   }
 
-  // --- Widget Card Ngôn ngữ ---
   Widget _buildLanguageTile(
     BuildContext context, {
     required String languageCode,
     required String title,
     required String emoji,
   }) {
-    // Đọc trạng thái từ Cubit (giữ nguyên logic của bạn)
     final currentLocale = context.watch<LocaleCubit>().state;
     final isSelected = currentLocale.languageCode == languageCode;
     final theme = Theme.of(context);
@@ -129,19 +102,17 @@ class LanguageSelectionScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         decoration: BoxDecoration(
           color: isSelected
-              ? theme.colorScheme.primary.withOpacity(
-                  0.08,
-                ) // Nền nhạt nếu được chọn
-              : theme.cardColor,
+              ? theme.colorScheme.primary.withOpacity(0.08)
+              : Colors.white,
           border: Border.all(
             color: isSelected
                 ? theme.colorScheme.primary
-                : Colors.grey.withOpacity(0.3),
-            width: isSelected ? 2 : 1, // Dày hơn nếu được chọn
+                : Colors.grey.shade300,
+            width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
-            if (!isSelected) // Bóng đổ nhẹ nhàng khi chưa chọn
+            if (!isSelected)
               BoxShadow(
                 color: Colors.black.withOpacity(0.03),
                 blurRadius: 10,
@@ -151,11 +122,8 @@ class LanguageSelectionScreen extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Emoji Quốc kỳ
             Text(emoji, style: const TextStyle(fontSize: 28)),
             const SizedBox(width: 16),
-
-            // Tên ngôn ngữ
             Expanded(
               child: Text(
                 title,
@@ -163,12 +131,10 @@ class LanguageSelectionScreen extends StatelessWidget {
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                   color: isSelected
                       ? theme.colorScheme.primary
-                      : theme.textTheme.bodyLarge?.color,
+                      : Colors.black87,
                 ),
               ),
             ),
-
-            // Icon Checkmark với hiệu ứng chuyển đổi
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 250),
               transitionBuilder: (child, animation) =>

@@ -27,6 +27,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
@@ -39,25 +40,88 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         }
       },
       child: Scaffold(
-        body: _screens[_currentIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: l10n.home),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: l10n.profile,
+        backgroundColor: Colors.white,
+        body: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          switchInCurve: Curves.easeIn,
+          switchOutCurve: Curves.easeOut,
+          child: _screens[_currentIndex],
+        ),
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 24,
+                offset: const Offset(0, -8),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 4.0,
+              ),
+              child: BottomNavigationBar(
+                currentIndex: _currentIndex,
+                onTap: (index) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+                backgroundColor: Colors.white,
+                elevation: 0,
+                type: BottomNavigationBarType.fixed,
+                selectedItemColor: theme.colorScheme.primary,
+                unselectedItemColor: Colors.grey.shade400,
+                selectedLabelStyle: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                ),
+                unselectedLabelStyle: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                ),
+                items: [
+                  BottomNavigationBarItem(
+                    icon: const Padding(
+                      padding: EdgeInsets.only(bottom: 6.0),
+                      child: Icon(Icons.home_outlined),
+                    ),
+                    activeIcon: const Padding(
+                      padding: EdgeInsets.only(bottom: 6.0),
+                      child: Icon(Icons.home_rounded),
+                    ),
+                    label: l10n.home,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: const Padding(
+                      padding: EdgeInsets.only(bottom: 6.0),
+                      child: Icon(Icons.person_outline_rounded),
+                    ),
+                    activeIcon: const Padding(
+                      padding: EdgeInsets.only(bottom: 6.0),
+                      child: Icon(Icons.person_rounded),
+                    ),
+                    label: l10n.profile,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: const Padding(
+                      padding: EdgeInsets.only(bottom: 6.0),
+                      child: Icon(Icons.settings_outlined),
+                    ),
+                    activeIcon: const Padding(
+                      padding: EdgeInsets.only(bottom: 6.0),
+                      child: Icon(Icons.settings_rounded),
+                    ),
+                    label: l10n.settings,
+                  ),
+                ],
+              ),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: l10n.settings,
-            ),
-          ],
+          ),
         ),
       ),
     );

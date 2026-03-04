@@ -38,18 +38,20 @@ class _ChatListScreenState extends State<ChatListScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6FA),
+      backgroundColor: const Color(0xFFF8F9FE),
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0.5,
-        title: const Text(
+        scrolledUnderElevation: 0,
+        elevation: 0,
+        centerTitle: false,
+        title: Text(
           "Chat Box",
-          style: TextStyle(
-            color: Colors.black,
+          style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
-            fontSize: 22,
+            letterSpacing: -0.5,
           ),
         ),
       ),
@@ -59,28 +61,29 @@ class _ChatListScreenState extends State<ChatListScreen> {
             return Center(
               child: Text(
                 l10n.noUsersFound,
-                style: const TextStyle(color: Colors.grey),
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: Colors.grey.shade500,
+                ),
               ),
             );
           }
 
           final me = users.firstWhere((u) => u.id == currentUser!.id);
-
           final otherUsers = users
               .where((u) => u.id != currentUser!.id)
               .toList();
 
           return ListView(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             children: [
-              _buildSectionTitle("Bạn"),
-              _buildUserTile(me, isMe: true),
-
+              _buildSectionTitle("Bạn", theme),
+              _buildUserTile(me, theme, isMe: true),
               if (otherUsers.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                _buildSectionTitle("Người dùng ứng dụng"),
-                ...otherUsers.map((user) => _buildUserTile(user)),
+                const SizedBox(height: 24),
+                _buildSectionTitle("Người dùng ứng dụng", theme),
+                ...otherUsers.map((user) => _buildUserTile(user, theme)),
               ],
+              const SizedBox(height: 24),
             ],
           );
         },
@@ -88,26 +91,25 @@ class _ChatListScreenState extends State<ChatListScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, ThemeData theme) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+      padding: const EdgeInsets.only(left: 8, bottom: 12),
       child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: Colors.grey,
-          letterSpacing: 0.5,
+        title.toUpperCase(),
+        style: theme.textTheme.labelMedium?.copyWith(
+          fontWeight: FontWeight.w700,
+          color: Colors.grey.shade500,
+          letterSpacing: 1.2,
         ),
       ),
     );
   }
 
-  Widget _buildUserTile(UserEntity user, {bool isMe = false}) {
+  Widget _buildUserTile(UserEntity user, ThemeData theme, {bool isMe = false}) {
     final isOnline = user.isOnline;
 
     if (isMe) {
-      return _buildUserTileContent(user, isOnline, 0, isMe: true);
+      return _buildUserTileContent(user, isOnline, 0, theme, isMe: true);
     }
 
     final sortedIds = [currentUser!.id, user.id]..sort();
@@ -130,7 +132,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
           }
         }
 
-        return _buildUserTileContent(user, isOnline, unread);
+        return _buildUserTileContent(user, isOnline, unread, theme);
       },
     );
   }
@@ -138,123 +140,164 @@ class _ChatListScreenState extends State<ChatListScreen> {
   Widget _buildUserTileContent(
     UserEntity user,
     bool isOnline,
-    int unread, {
+    int unread,
+    ThemeData theme, {
     bool isMe = false,
   }) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(16),
-      onTap: isMe
-          ? null
-          : () async {
-              final result = await context.read<ChatRoomCubit>().createRoom(
-                user.id,
-              );
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(
+          color: isMe
+              ? theme.colorScheme.primary.withOpacity(0.2)
+              : Colors.transparent,
+          width: 1.5,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: isMe
+              ? null
+              : () async {
+                  final result = await context.read<ChatRoomCubit>().createRoom(
+                    user.id,
+                  );
 
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ChatRoomScreen(
-                    roomId: result.roomId,
-                    currentUserId: currentUser!.id,
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChatRoomScreen(
+                        roomId: result.roomId,
+                        currentUserId: currentUser!.id,
+                      ),
+                    ),
+                  );
+                },
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Stack(
+                  children: [
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isMe
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.primary.withOpacity(0.1),
+                        image: user.photoUrl != null
+                            ? DecorationImage(
+                                image: NetworkImage(user.photoUrl!),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                      ),
+                      alignment: Alignment.center,
+                      child: user.photoUrl == null
+                          ? Text(
+                              user.fullName.isNotEmpty
+                                  ? user.fullName[0].toUpperCase()
+                                  : "?",
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: isMe
+                                    ? theme.colorScheme.onPrimary
+                                    : theme.colorScheme.primary,
+                              ),
+                            )
+                          : null,
+                    ),
+                    if (isOnline)
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          width: 16,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: Colors.green.shade400,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2.5),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user.fullName,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: isMe
+                              ? theme.colorScheme.primary
+                              : Colors.black87,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _buildStatus(user),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: isOnline
+                              ? Colors.green.shade600
+                              : Colors.grey.shade500,
+                          fontWeight: isOnline
+                              ? FontWeight.w500
+                              : FontWeight.normal,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              );
-            },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Stack(
-              children: [
-                CircleAvatar(
-                  radius: 28,
-                  backgroundColor: isMe ? Colors.blue : Colors.blue.shade100,
-                  backgroundImage: user.photoUrl != null
-                      ? NetworkImage(user.photoUrl!)
-                      : null,
-                  child: user.photoUrl == null
-                      ? Text(
-                          user.fullName.isNotEmpty
-                              ? user.fullName[0].toUpperCase()
-                              : "?",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: isMe ? Colors.white : Colors.black,
-                          ),
-                        )
-                      : null,
-                ),
-                if (isOnline)
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      width: 14,
-                      height: 14,
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
+                if (unread > 0)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.error,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.colorScheme.error.withOpacity(0.3),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      unread > 99 ? "99+" : unread.toString(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
                       ),
                     ),
                   ),
               ],
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    user.fullName,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      color: isMe ? Colors.blue : Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _buildStatus(user),
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: isOnline ? Colors.green : Colors.grey.shade600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            if (unread > 0)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  unread > 99 ? "99+" : unread.toString(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-          ],
+          ),
         ),
       ),
     );
