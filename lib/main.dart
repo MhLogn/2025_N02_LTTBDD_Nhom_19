@@ -14,6 +14,7 @@ import 'package:my_project/presentation/Chat/chatList_cubit.dart';
 import 'package:my_project/presentation/Chat/message_cubit.dart';
 import 'package:my_project/presentation/language/locale_cubit.dart';
 import 'package:my_project/presentation/auth/cubit/auth_cubit.dart';
+import 'package:my_project/presentation/profile/profile_cubit.dart';
 import 'package:my_project/presentation/screens/splash_screen.dart';
 
 void main() async {
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => sl<ChatCubit>()),
         BlocProvider(create: (_) => sl<ChatRoomCubit>()),
         BlocProvider(create: (_) => sl<MessageCubit>()),
+        BlocProvider(create: (_) => sl<ProfileCubit>()),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(
         builder: (context, locale) {

@@ -9,12 +9,10 @@ class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
-  State<ForgotPasswordScreen> createState() =>
-      _ForgotPasswordScreenState();
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState
-    extends State<ForgotPasswordScreen> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _emailController = TextEditingController();
 
   @override
@@ -49,30 +47,30 @@ class _ForgotPasswordScreenState
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        SnackBar(content: Text(message)),
+        SnackBar(
+          content: Text(message),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
       );
   }
 
-  String _mapAuthError(
-      BuildContext context, AuthErrorType type) {
+  String _mapAuthError(BuildContext context, AuthErrorType type) {
     final l10n = AppLocalizations.of(context)!;
 
     switch (type) {
       case AuthErrorType.invalidEmail:
         return l10n.auth_invalidEmail;
-
       case AuthErrorType.tooManyRequests:
         return l10n.auth_tooManyRequests;
-
       case AuthErrorType.networkError:
         return l10n.auth_networkError;
-
       case AuthErrorType.authenticationFailed:
         return l10n.auth_authenticationFailed;
-
       case AuthErrorType.unknown:
         return l10n.auth_unknown;
-
       default:
         return l10n.auth_unknown;
     }
@@ -84,9 +82,10 @@ class _ForgotPasswordScreenState
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
+
       body: BlocConsumer<AuthCubit, AuthState>(
         listenWhen: (previous, current) =>
-        previous.runtimeType != current.runtimeType,
+            previous.runtimeType != current.runtimeType,
         listener: (context, state) {
           if (state is AuthPasswordResetSent) {
             _showError(context, l10n.resetLinkSentMessage);
@@ -94,81 +93,101 @@ class _ForgotPasswordScreenState
           }
 
           if (state is AuthError) {
-            _showError(
-              context,
-              _mapAuthError(context, state.type),
-            );
+            _showError(context, _mapAuthError(context, state.type));
           }
         },
         builder: (context, state) {
           return SafeArea(
             child: Padding(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment:
-                  CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 60),
-
                     Text(
                       l10n.forgotPasswordTitle,
-                      style:
-                      theme.textTheme.headlineMedium,
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    Text(
-                      l10n.forgotPasswordSubtitle,
-                      style:
-                      theme.textTheme.bodyMedium,
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    Text(
-                      l10n.email,
-                      style: theme.textTheme.labelLarge,
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    TextField(
-                      controller: _emailController,
-                      keyboardType:
-                      TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        hintText: l10n.enterEmail,
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -0.5,
                       ),
                     ),
-
-                    const SizedBox(height: 32),
-
+                    const SizedBox(height: 12),
+                    Text(
+                      l10n.forgotPasswordSubtitle,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: Colors.grey.shade600,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 48),
+                    Text(
+                      l10n.email,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        hintText: l10n.enterEmail,
+                        hintStyle: TextStyle(color: Colors.grey.shade400),
+                        filled: true,
+                        fillColor: Colors.grey.shade50,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 18,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: Colors.grey.shade200),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.primary,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 40),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: state is AuthLoading
                             ? null
-                            : () =>
-                            _sendResetLink(context),
+                            : () => _sendResetLink(context),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 18),
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: theme.colorScheme.onPrimary,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
                         child: state is AuthLoading
                             ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child:
-                          CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                            : Text(l10n.sendResetLink),
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Text(
+                                l10n.sendResetLink,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                       ),
                     ),
-
-                    const SizedBox(height: 24),
-
+                    const SizedBox(height: 32),
                     Center(
                       child: GestureDetector(
                         onTap: () {
@@ -176,16 +195,13 @@ class _ForgotPasswordScreenState
                         },
                         child: Text(
                           l10n.backToLogin,
-                          style:
-                          theme.textTheme.bodySmall
-                              ?.copyWith(
-                            color: theme
-                                .colorScheme.primary,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 24),
                   ],
                 ),

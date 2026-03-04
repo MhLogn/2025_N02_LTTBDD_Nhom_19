@@ -62,7 +62,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPassword => 'Forgot password?';
 
   @override
-  String get dontHaveAccount => 'Don\'t have an account? Create one';
+  String get dontHaveAccount => 'Don\'t have an account?';
 
   @override
   String get fillAllFields => 'Please fill all fields';
@@ -104,7 +104,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get registerSuccess => 'Register successful! Please login.';
 
   @override
-  String get alreadyHaveAccount => 'Already have an account? Login';
+  String get alreadyHaveAccount => 'Already have an account?';
 
   @override
   String get forgotPasswordTitle => 'Forgot Password';
@@ -158,6 +158,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chooseLanguage => 'Choose your language';
+
+  @override
+  String get languageTitle =>
+      'Please select your preferred language to continue';
 
   @override
   String get continueText => 'Continue';

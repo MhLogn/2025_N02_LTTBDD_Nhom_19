@@ -78,7 +78,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
               if (otherUsers.isNotEmpty) ...[
                 const SizedBox(height: 16),
-                _buildSectionTitle("Người dùng chung ứng dụng"),
+                _buildSectionTitle("Người dùng ứng dụng"),
                 ...otherUsers.map((user) => _buildUserTile(user)),
               ],
             ],

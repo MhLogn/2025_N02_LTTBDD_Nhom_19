@@ -93,7 +93,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _showError(BuildContext context, String message) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
   }
 
   String _mapAuthError(BuildContext context, AuthErrorType type) {
@@ -102,25 +110,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     switch (type) {
       case AuthErrorType.invalidEmail:
         return l10n.auth_invalidEmail;
-
       case AuthErrorType.emailAlreadyInUse:
         return l10n.auth_emailAlreadyInUse;
-
       case AuthErrorType.weakPassword:
         return l10n.passwordMinLength;
-
       case AuthErrorType.tooManyRequests:
         return l10n.auth_tooManyRequests;
-
       case AuthErrorType.networkError:
         return l10n.auth_networkError;
-
       case AuthErrorType.authenticationFailed:
         return l10n.auth_authenticationFailed;
-
       case AuthErrorType.unknown:
         return l10n.auth_unknown;
-
       default:
         return l10n.auth_unknown;
     }
@@ -132,6 +133,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthRegisterSuccess) {
@@ -159,65 +161,166 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 60),
 
                     Text(
                       l10n.createAccount,
-                      style: theme.textTheme.headlineMedium,
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -0.5,
+                      ),
                     ),
 
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 12),
 
                     Text(
                       l10n.registerSubtitle,
-                      style: theme.textTheme.bodyMedium,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: Colors.grey.shade600,
+                      ),
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 48),
 
-                    Text(l10n.fullName, style: theme.textTheme.labelLarge),
+                    Text(
+                      l10n.fullName,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _fullNameController,
-                      decoration: InputDecoration(hintText: l10n.enterFullName),
+                      decoration: InputDecoration(
+                        hintText: l10n.enterFullName,
+                        hintStyle: TextStyle(color: Colors.grey.shade400),
+                        filled: true,
+                        fillColor: Colors.grey.shade50,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 18,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: Colors.grey.shade200),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.primary,
+                            width: 2,
+                          ),
+                        ),
+                      ),
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
-                    Text(l10n.username, style: theme.textTheme.labelLarge),
+                    Text(
+                      l10n.username,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _usernameController,
                       decoration: InputDecoration(
                         hintText: l10n.chooseUsername,
+                        hintStyle: TextStyle(color: Colors.grey.shade400),
+                        filled: true,
+                        fillColor: Colors.grey.shade50,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 18,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: Colors.grey.shade200),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.primary,
+                            width: 2,
+                          ),
+                        ),
                       ),
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
-
-                    Text(l10n.email, style: theme.textTheme.labelLarge),
+                    Text(
+                      l10n.email,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(hintText: l10n.enterEmail),
+                      decoration: InputDecoration(
+                        hintText: l10n.enterEmail,
+                        hintStyle: TextStyle(color: Colors.grey.shade400),
+                        filled: true,
+                        fillColor: Colors.grey.shade50,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 18,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: Colors.grey.shade200),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.primary,
+                            width: 2,
+                          ),
+                        ),
+                      ),
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
-                    Text(l10n.password, style: theme.textTheme.labelLarge),
+                    Text(
+                      l10n.password,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         hintText: l10n.createPassword,
+                        hintStyle: TextStyle(color: Colors.grey.shade400),
+                        filled: true,
+                        fillColor: Colors.grey.shade50,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 18,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: Colors.grey.shade200),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.primary,
+                            width: 2,
+                          ),
+                        ),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscurePassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
+                            color: Colors.grey.shade500,
                           ),
                           onPressed: () {
                             setState(() {
@@ -228,11 +331,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
                     Text(
                       l10n.confirmPassword,
-                      style: theme.textTheme.labelLarge,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     TextField(
@@ -240,11 +345,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       obscureText: _obscureConfirmPassword,
                       decoration: InputDecoration(
                         hintText: l10n.reEnterPassword,
+                        hintStyle: TextStyle(color: Colors.grey.shade400),
+                        filled: true,
+                        fillColor: Colors.grey.shade50,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 18,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: Colors.grey.shade200),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.primary,
+                            width: 2,
+                          ),
+                        ),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscureConfirmPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
+                            color: Colors.grey.shade500,
                           ),
                           onPressed: () {
                             setState(() {
@@ -256,17 +380,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 40),
 
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () => _register(context),
-                        child: Text(l10n.register),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 18),
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: theme.colorScheme.onPrimary,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          l10n.register,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
 
                     Center(
                       child: GestureDetector(
@@ -278,16 +417,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           );
                         },
-                        child: Text(
-                          l10n.alreadyHaveAccount,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.primary,
+                        child: RichText(
+                          text: TextSpan(
+                            text: "${l10n.alreadyHaveAccount} ",
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey.shade600,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: l10n.login,
+                                style: TextStyle(
+                                  color: theme.colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 32),
                   ],
                 ),
               ),

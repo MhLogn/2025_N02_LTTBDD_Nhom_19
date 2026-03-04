@@ -120,4 +120,30 @@ class AuthRepositoryImpl implements AuthRepository {
 
     return await userDataSource.getUser(firebaseUser.uid);
   }
+
+  @override
+  Future<void> updateProfile({
+    required String fullName,
+    required String username,
+    required String email,
+    String? photoUrl,
+  }) async {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+
+    if (firebaseUser == null) {
+      throw Exception("User not logged in");
+    }
+
+    if (firebaseUser.email != email) {
+      await firebaseUser.verifyBeforeUpdateEmail(email);
+    }
+
+    await userDataSource.updateUserProfile(
+      uid: firebaseUser.uid,
+      fullName: fullName,
+      username: username,
+      email: email,
+      photoUrl: photoUrl,
+    );
+  }
 }

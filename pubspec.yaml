@@ -45,6 +45,7 @@ dependencies:
   flutter_bloc: ^9.1.1
   shared_preferences: ^2.5.3
   fl_chart: ^0.66.2
+  image_picker:
 
 dev_dependencies:
   flutter_test:

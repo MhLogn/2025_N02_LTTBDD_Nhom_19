@@ -10,7 +10,15 @@ abstract class AuthRepository {
     required String password,
   });
 
+  Future<void> updateProfile({
+    required String fullName,
+    required String username,
+    required String email,
+    String? photoUrl,
+  });
+
   Future<void> updateUserAfterLogin(String uid);
+
   Future<void> updateUserOffline(String uid);
 
   Stream<List<UserEntity>> getAllUsers();

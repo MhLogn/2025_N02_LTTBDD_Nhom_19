@@ -203,7 +203,7 @@ abstract class AppLocalizations {
   /// No description provided for @dontHaveAccount.
   ///
   /// In en, this message translates to:
-  /// **'Don\'t have an account? Create one'**
+  /// **'Don\'t have an account?'**
   String get dontHaveAccount;
 
   /// No description provided for @fillAllFields.
@@ -287,7 +287,7 @@ abstract class AppLocalizations {
   /// No description provided for @alreadyHaveAccount.
   ///
   /// In en, this message translates to:
-  /// **'Already have an account? Login'**
+  /// **'Already have an account?'**
   String get alreadyHaveAccount;
 
   /// No description provided for @forgotPasswordTitle.
@@ -385,6 +385,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose your language'**
   String get chooseLanguage;
+
+  /// No description provided for @languageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select your preferred language to continue'**
+  String get languageTitle;
 
   /// No description provided for @continueText.
   ///

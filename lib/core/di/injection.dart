@@ -15,6 +15,7 @@ import 'package:my_project/domain/usecases/user_status_usecase.dart';
 import 'package:my_project/presentation/Chat/chatRoom_cubit.dart';
 import 'package:my_project/presentation/Chat/chatList_cubit.dart';
 import 'package:my_project/presentation/Chat/message_cubit.dart';
+import 'package:my_project/presentation/profile/profile_cubit.dart';
 
 import '../../data/datasources/firebase_auth_datasource.dart';
 import '../../data/datasources/user_firestore_datasource.dart';
@@ -95,4 +96,7 @@ Future<void> init() async {
 
   /// MessageCubit
   sl.registerFactory(() => MessageCubit(sl(), sl()));
+
+  /// ProfileCubit
+  sl.registerFactory(() => ProfileCubit(sl()));
 }

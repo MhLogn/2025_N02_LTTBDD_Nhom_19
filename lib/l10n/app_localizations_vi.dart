@@ -62,7 +62,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get forgotPassword => 'Quên mật khẩu?';
 
   @override
-  String get dontHaveAccount => 'Chưa có tài khoản? Tạo ngay';
+  String get dontHaveAccount => 'Chưa có tài khoản?';
 
   @override
   String get fillAllFields => 'Vui lòng điền đầy đủ thông tin';
@@ -104,7 +104,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get registerSuccess => 'Đăng ký thành công! Vui lòng đăng nhập.';
 
   @override
-  String get alreadyHaveAccount => 'Đã có tài khoản? Đăng nhập';
+  String get alreadyHaveAccount => 'Đã có tài khoản?';
 
   @override
   String get forgotPasswordTitle => 'Quên mật khẩu';
@@ -156,6 +156,10 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get chooseLanguage => 'Chọn ngôn ngữ';
+
+  @override
+  String get languageTitle =>
+      'Vui lòng chọn ngôn ngữ bạn muốn sử dụng để tiếp tục';
 
   @override
   String get continueText => 'Tiếp tục';
