@@ -41,20 +41,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        scrolledUnderElevation: 0,
-        elevation: 0,
-        centerTitle: false,
-        title: Text(
-          "Chat Box",
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            letterSpacing: -0.5,
-          ),
-        ),
-      ),
+      backgroundColor: theme.colorScheme.surface,
+      appBar: AppBar(title: const Text("Chat Box")),
       body: BlocBuilder<ChatCubit, List<UserEntity>>(
         builder: (context, users) {
           if (users.isEmpty || currentUser == null) {
@@ -243,28 +231,66 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // 🔹 Full Name: Sử dụng titleMedium mặc định từ theme
                       Text(
                         user.fullName,
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.bold,
+                          // Đậm hơn một chút để nổi bật
                           color: isMe
                               ? theme.colorScheme.primary
-                              : Colors.black87,
+                              : theme.colorScheme.onSurface.withOpacity(0.9),
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
+
                       const SizedBox(height: 4),
-                      Text(
-                        _buildStatus(user),
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: isOnline
-                              ? Colors.green.shade600
-                              : Colors.grey.shade500,
-                          fontWeight: isOnline
-                              ? FontWeight.w500
-                              : FontWeight.normal,
-                        ),
+
+                      // 🔹 Username + Status: Sử dụng bodySmall hoặc labelMedium
+                      Row(
+                        children: [
+                          Text(
+                            "@${user.username}",
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              // Dùng onSurfaceVariant cho các thông tin phụ, ít quan trọng hơn
+                              color: theme.colorScheme.onSurfaceVariant,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+
+                          const SizedBox(width: 8),
+
+                          // Dấu chấm phân cách tinh tế
+                          Container(
+                            width: 4,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.outlineVariant,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+
+                          const SizedBox(width: 8),
+
+                          Expanded(
+                            child: Text(
+                              _buildStatus(user),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: isOnline
+                                    ? (isMe
+                                          ? Colors.green.shade600
+                                          : Colors.grey.shade500)
+                                    : theme.colorScheme.onSurfaceVariant
+                                          .withOpacity(0.7),
+                                fontWeight: isOnline
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

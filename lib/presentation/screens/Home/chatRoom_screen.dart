@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:my_project/domain/entities/message_entity.dart';
 import 'package:my_project/presentation/Chat/message_cubit.dart';
 import 'package:my_project/presentation/Chat/chatRoom_cubit.dart';
@@ -27,9 +26,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   @override
   void initState() {
     super.initState();
-
     context.read<MessageCubit>().listenMessages(widget.roomId);
-
     context.read<ChatRoomCubit>().resetUnread(
       widget.roomId,
       widget.currentUserId,
@@ -39,11 +36,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   void _send() async {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
-
     await context.read<MessageCubit>().sendMessage(widget.roomId, text);
-
     _controller.clear();
-
     Future.delayed(const Duration(milliseconds: 150), () {
       if (_scrollController.hasClients) {
         _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
@@ -53,14 +47,12 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFEDEDED),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.5,
-        iconTheme: const IconThemeData(color: Colors.black),
-        title: const Text("Chat", style: TextStyle(color: Colors.black)),
-      ),
+      backgroundColor: theme.colorScheme.surface,
+      // Sử dụng màu xám nhạt từ AppTheme
+      appBar: AppBar(title: const Text("Chat"), backgroundColor: Colors.white),
       body: Column(
         children: [
           Expanded(
@@ -69,58 +61,67 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 return ListView.builder(
                   controller: _scrollController,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
+                    horizontal: 16,
+                    vertical: 16,
                   ),
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     final message = messages[index];
                     final isMe = message.senderId == widget.currentUserId;
-
                     return MessageBubble(message: message, isMe: isMe);
                   },
                 );
               },
             ),
           ),
-          _buildInputBar(),
+          _buildInputBar(theme),
         ],
       ),
     );
   }
 
-  Widget _buildInputBar() {
+  Widget _buildInputBar(ThemeData theme) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
-      color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF5F5F5),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: TextField(
-                controller: _controller,
-                decoration: const InputDecoration(
-                  hintText: "Message",
-                  border: InputBorder.none,
+            child: TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                hintText: "Nhập tin nhắn...",
+                fillColor: theme.colorScheme.surface,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
                 ),
               ),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 12),
           GestureDetector(
             onTap: _send,
             child: Container(
               padding: const EdgeInsets.all(12),
-              decoration: const BoxDecoration(
-                color: Color(0xFF0088CC),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.send, color: Colors.white, size: 20),
+              child: const Icon(
+                Icons.send_rounded,
+                color: Colors.white,
+                size: 22,
+              ),
             ),
           ),
         ],

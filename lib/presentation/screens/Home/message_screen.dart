@@ -10,53 +10,60 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final time = DateFormat('HH:mm').format(message.createdAt);
 
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.7,
+          maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
         decoration: BoxDecoration(
-          color: isMe ? const Color(0xFF0088CC) : Colors.white,
+          color: isMe ? theme.colorScheme.primary : Colors.white,
           borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(18),
-            topRight: const Radius.circular(18),
-            bottomLeft: Radius.circular(isMe ? 18 : 0),
-            bottomRight: Radius.circular(isMe ? 0 : 18),
+            topLeft: const Radius.circular(20),
+            topRight: const Radius.circular(20),
+            bottomLeft: Radius.circular(isMe ? 20 : 4),
+            bottomRight: Radius.circular(isMe ? 4 : 20),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04), // Bóng đổ cực nhẹ
+              blurRadius: 5,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
               message.content,
-              style: TextStyle(
-                color: isMe ? Colors.white : Colors.black87,
-                fontSize: 15,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: isMe ? theme.colorScheme.onPrimary : Colors.black87,
               ),
             ),
             const SizedBox(height: 4),
-
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   time,
-                  style: TextStyle(
-                    color: isMe ? Colors.white70 : Colors.grey,
-                    fontSize: 11,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: isMe ? Colors.white70 : Colors.grey.shade500,
+                    fontSize: 10,
                   ),
                 ),
-
                 if (isMe) ...[
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 4),
                   Icon(
-                    message.isSeen ? Icons.done_all : Icons.done,
-                    size: 16,
+                    message.isSeen
+                        ? Icons.done_all_rounded
+                        : Icons.check_rounded,
+                    size: 14,
                     color: message.isSeen ? Colors.white : Colors.white70,
                   ),
                 ],
