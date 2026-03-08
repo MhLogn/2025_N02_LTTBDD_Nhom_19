@@ -57,18 +57,26 @@ class _ChatListScreenState extends State<ChatListScreen> {
           }
 
           final me = users.firstWhere((u) => u.id == currentUser!.id);
-          final otherUsers = users
-              .where((u) => u.id != currentUser!.id)
-              .toList();
+          final otherUsers =
+              users.where((u) => u.id != currentUser!.id).toList()
+                ..sort((a, b) {
+                  final aIds = [currentUser!.id, a.id]..sort();
+                  final bIds = [currentUser!.id, b.id]..sort();
+
+                  final aRoom = "${aIds[0]}_${aIds[1]}";
+                  final bRoom = "${bIds[0]}_${bIds[1]}";
+
+                  return bRoom.compareTo(aRoom);
+                });
 
           return ListView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             children: [
-              _buildSectionTitle("Bạn", theme),
+              _buildSectionTitle(l10n.isYou, theme),
               _buildUserTile(me, theme, isMe: true),
               if (otherUsers.isNotEmpty) ...[
                 const SizedBox(height: 24),
-                _buildSectionTitle("Người dùng ứng dụng", theme),
+                _buildSectionTitle(l10n.appUsers, theme),
                 ...otherUsers.map((user) => _buildUserTile(user, theme)),
               ],
               const SizedBox(height: 24),
@@ -110,17 +118,28 @@ class _ChatListScreenState extends State<ChatListScreen> {
           .snapshots(),
       builder: (context, snapshot) {
         int unread = 0;
+        DateTime? lastMessageTime;
 
         if (snapshot.hasData && snapshot.data!.exists) {
           final data = snapshot.data!.data() as Map<String, dynamic>;
-          final unreadMap = data['unreadCounts'] as Map<String, dynamic>?;
 
+          final unreadMap = data['unreadCounts'] as Map<String, dynamic>?;
           if (unreadMap != null) {
             unread = unreadMap[currentUser!.id] ?? 0;
           }
+
+          if (data['lastMessageTime'] != null) {
+            lastMessageTime = (data['lastMessageTime'] as Timestamp).toDate();
+          }
         }
 
-        return _buildUserTileContent(user, isOnline, unread, theme);
+        return _buildUserTileContent(
+          user,
+          isOnline,
+          unread,
+          theme,
+          lastMessageTime: lastMessageTime,
+        );
       },
     );
   }
@@ -131,6 +150,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     int unread,
     ThemeData theme, {
     bool isMe = false,
+    DateTime? lastMessageTime,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -231,12 +251,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // 🔹 Full Name: Sử dụng titleMedium mặc định từ theme
                       Text(
                         user.fullName,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          // Đậm hơn một chút để nổi bật
                           color: isMe
                               ? theme.colorScheme.primary
                               : theme.colorScheme.onSurface.withOpacity(0.9),
@@ -247,13 +265,11 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
                       const SizedBox(height: 4),
 
-                      // 🔹 Username + Status: Sử dụng bodySmall hoặc labelMedium
                       Row(
                         children: [
                           Text(
                             "@${user.username}",
                             style: theme.textTheme.bodySmall?.copyWith(
-                              // Dùng onSurfaceVariant cho các thông tin phụ, ít quan trọng hơn
                               color: theme.colorScheme.onSurfaceVariant,
                               fontWeight: FontWeight.w600,
                             ),
@@ -261,7 +277,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
                           const SizedBox(width: 8),
 
-                          // Dấu chấm phân cách tinh tế
                           Container(
                             width: 4,
                             height: 4,
@@ -330,19 +345,21 @@ class _ChatListScreenState extends State<ChatListScreen> {
   }
 
   String _buildStatus(UserEntity user) {
-    if (user.isOnline) return "Online";
-    if (user.lastSeen == null) return "Offline";
+    final l10n = AppLocalizations.of(context)!;
+
+    if (user.isOnline) return l10n.online;
+    if (user.lastSeen == null) return l10n.offline;
 
     final diff = DateTime.now().difference(user.lastSeen!);
 
     if (diff.inSeconds < 60) {
-      return "Vừa offline";
+      return l10n.justOffline;
     } else if (diff.inMinutes < 60) {
-      return "Offline ${diff.inMinutes} phút trước";
+      return l10n.offlineMinutes(diff.inMinutes);
     } else if (diff.inHours < 24) {
-      return "Offline ${diff.inHours} giờ trước";
+      return l10n.offlineHours(diff.inHours);
     } else {
-      return "Offline ${diff.inDays} ngày trước";
+      return l10n.offlineDays(diff.inDays);
     }
   }
 }

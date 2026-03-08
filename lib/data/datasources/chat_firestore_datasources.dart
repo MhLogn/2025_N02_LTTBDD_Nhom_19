@@ -65,7 +65,7 @@ class ChatRoomFirestoreDataSource {
         'senderId': senderId,
         'content': content,
         'createdAt': Timestamp.now(),
-        'isRead': false,
+        'isSeen': false,
         'seenAt': null,
       });
 
@@ -82,27 +82,24 @@ class ChatRoomFirestoreDataSource {
       'unreadCounts.$currentUserId': 0,
     });
 
-    await markMessagesAsSeen(roomId, currentUserId);
+    await markMessagesSeen(roomId, currentUserId);
   }
 
-  Future<void> markMessagesAsSeen(String roomId, String currentUserId) async {
+  Future<void> markMessagesSeen(String roomId, String currentUserId) async {
     final messagesRef = firestore
         .collection('chat_rooms')
         .doc(roomId)
         .collection('messages');
 
-    final snapshot = await messagesRef.where('isSeen', isEqualTo: false).get();
+    final unreadMessages = await messagesRef
+        .where('senderId', isNotEqualTo: currentUserId)
+        .where('isSeen', isEqualTo: false)
+        .get();
 
     final batch = firestore.batch();
 
-    for (var doc in snapshot.docs) {
-      final data = doc.data();
-      if (data['senderId'] != currentUserId) {
-        batch.update(doc.reference, {
-          'isSeen': true,
-          'seenAt': Timestamp.now(),
-        });
-      }
+    for (var doc in unreadMessages.docs) {
+      batch.update(doc.reference, {'isSeen': true, 'seenAt': Timestamp.now()});
     }
 
     await batch.commit();

@@ -53,6 +53,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
   }
@@ -82,6 +83,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: BlocConsumer<AuthCubit, AuthState>(
         listenWhen: (previous, current) =>
             previous.runtimeType != current.runtimeType,
@@ -96,68 +98,77 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           }
         },
         builder: (context, state) {
+          final isLoading = state is AuthLoading;
+
           return SafeArea(
-            child: Padding(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 60),
-                    Text(
-                      l10n.forgotPasswordTitle,
-                      style: theme.textTheme.headlineMedium,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 60),
+                  Text(
+                    l10n.forgotPasswordTitle,
+                    style: theme.textTheme.headlineMedium,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    l10n.forgotPasswordSubtitle,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.6),
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      l10n.forgotPasswordSubtitle,
-                      style: theme.textTheme.bodyLarge,
-                    ),
-                    const SizedBox(height: 48),
-                    Text(l10n.email, style: theme.textTheme.titleSmall),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(hintText: l10n.enterEmail),
-                    ),
-                    const SizedBox(height: 40),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: state is AuthLoading
-                            ? null
-                            : () => _sendResetLink(context),
-                        child: state is AuthLoading
-                            ? const SizedBox(
-                                height: 24,
-                                width: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Text(l10n.sendResetLink),
+                  ),
+                  const SizedBox(height: 48),
+                  Text(l10n.email, style: theme.textTheme.titleSmall),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.done,
+                    enabled: !isLoading,
+                    onSubmitted: (_) =>
+                        isLoading ? null : _sendResetLink(context),
+                    decoration: InputDecoration(
+                      hintText: l10n.enterEmail,
+                      prefixIcon: Icon(
+                        Icons.email_outlined,
+                        color: theme.colorScheme.onSurface.withOpacity(0.4),
                       ),
                     ),
-                    const SizedBox(height: 32),
-                    Center(
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          l10n.backToLogin,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
+                  ),
+                  const SizedBox(height: 40),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: isLoading
+                          ? null
+                          : () => _sendResetLink(context),
+                      child: isLoading
+                          ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Text(l10n.sendResetLink),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  Center(
+                    child: GestureDetector(
+                      onTap: isLoading ? null : () => Navigator.pop(context),
+                      child: Text(
+                        l10n.backToLogin,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: theme.colorScheme.primary,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 24),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
               ),
             ),
           );

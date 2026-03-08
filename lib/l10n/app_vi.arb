@@ -50,19 +50,53 @@
    "languageTitle": "Vui lòng chọn ngôn ngữ bạn muốn sử dụng để tiếp tục",
    "continueText": "Tiếp tục",
    "home": "Trang chủ",
-   "profile": "Trang cá nhân",
    "settings": "Cài đặt",
     "noUsersFound": "Không tìm thấy người dùng",
     "online": "Đang hoạt động",
-    "minutesAgo": "{minutes}p",
-    "@minutesAgo": {
+    "offline": "Không hoạt động",
+    "justOffline": "Vừa offline",
+  "offlineMinutes": "Offline {minutes} phút trước",
+  "@offlineMinutes": {
+    "placeholders": {
+      "minutes": {}
+    }
+  },
+    "offlineHours": "Offline {hours} giờ trước",
+    "@offlineHours": {
       "placeholders": {
-        "minutes": {}
+        "hours": {}
       }
     },
+      "offlineDays": "Offline {days} ngày trước",
+      "@offlineDays": {
+        "placeholders": {
+          "days": {}
+        }
+      },
     "changeLanguage": "Đổi ngôn ngữ",
     "selectLanguage": "Chọn ngôn ngữ",
     "logout": "Đăng xuất",
     "logoutConfirm": "Bạn có chắc muốn đăng xuất không?",
-    "cancel": "Hủy"
+    "cancel": "Hủy",
+    "isYou": "Bạn",
+    "appUsers": "Người dùng ứng dụng",
+    "chat": "Hộp thoại",
+    "message": "Nhập tin nhắn...",
+    "profile": "Hồ sơ",
+    "profileUpdatedSuccessfully": "Cập nhật hồ sơ thành công",
+    "saveChanges": "Lưu thay đổi",
+    "groupInfo": "Thông tin nhóm",
+    "course": "Học phần",
+    "courseName": "Lập trình cho thiết bị di động",
+    "projectTopic": "Đề tài",
+    "projectName": "Chat Box – Ứng dụng nhắn tin",
+    "className": "Lớp học",
+    "teacher": "Giáo viên hướng dẫn",
+    "teacherName": "ThS: Nguyễn Xuân Quế",
+    "groupName": "Tên nhóm",
+    "groupNameValue": "2025-LTTBDD-N02-Nhom_19",
+    "groupMembers": "Thành viên nhóm",
+    "fullName": "Họ và tên",
+    "studentId": "MSSV",
+    "or": "Hoặc"
 }

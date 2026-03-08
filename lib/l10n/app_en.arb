@@ -54,15 +54,50 @@
    "settings": "Settings",
    "noUsersFound": "No users found",
    "online": "Online",
-   "minutesAgo": "{minutes}m",
-   "@minutesAgo": {
-     "placeholders": {
-       "minutes": {}
-     }
-   },
+   "offline": "Offline",
+   "justOffline": "Just went offline",
+  "offlineMinutes": "Offline {minutes} minutes ago",
+  "@offlineMinutes": {
+    "placeholders": {
+      "minutes": {}
+    }
+  },
+   "offlineHours": "Offline {hours} hours ago",
+     "@offlineHours": {
+       "placeholders": {
+         "hours": {}
+       }
+     },
+     "offlineDays": "Offline {days} days ago",
+       "@offlineDays": {
+         "placeholders": {
+           "days": {}
+         }
+       },
    "changeLanguage": "Change Language",
    "selectLanguage": "Select Language",
    "logout": "Logout",
    "logoutConfirm": "Are you sure you want to logout?",
-   "cancel": "Cancel"
+   "cancel": "Cancel",
+   "isYou": "You",
+   "appUsers": "App Users",
+   "chat": "Chat",
+   "message": "Enter your message...",
+   "profile": "Profile",
+   "profileUpdatedSuccessfully": "Profile updated successfully",
+   "saveChanges": "Save Changes",
+   "groupInfo": "Group Info",
+    "course": "Course",
+   "courseName": "Mobile Application Development",
+   "projectTopic": "Project Topic",
+   "projectName": "Chat Box – Messaging Application",
+   "className": "Class",
+   "teacher": "Supervisor",
+   "teacherName": "MSc: Nguyen Xuan Que",
+   "groupName": "Group Name",
+   "groupNameValue": "2025-LTTBDD-N02-Group_19",
+   "groupMembers": "Group Members",
+   "fullName": "Full Name",
+   "studentId": "Student ID",
+   "or": "Or"
 }

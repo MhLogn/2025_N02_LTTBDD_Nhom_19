@@ -9,6 +9,7 @@ import 'package:my_project/domain/usecases/forgot_password_usecase.dart';
 import 'package:my_project/domain/usecases/getMessage_usecase.dart';
 import 'package:my_project/domain/usecases/getUser_usecase.dart';
 import 'package:my_project/domain/usecases/logout_usecase.dart';
+import 'package:my_project/domain/usecases/markSeen_usecase.dart';
 import 'package:my_project/domain/usecases/message_usecase.dart';
 import 'package:my_project/domain/usecases/resetUnread_usecase.dart';
 import 'package:my_project/domain/usecases/user_status_usecase.dart';
@@ -76,6 +77,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => ResetUnreadUseCase(sl()));
   sl.registerLazySingleton(() => SendMessageUseCase(sl(), sl()));
   sl.registerLazySingleton(() => GetMessagesUseCase(sl()));
+  sl.registerFactory(() => MarkMessagesSeenUseCase(sl()));
 
   /// AuthCubit
   sl.registerFactory(
@@ -92,7 +94,7 @@ Future<void> init() async {
   sl.registerFactory(() => ChatCubit(sl()));
 
   /// ChatRoomCubit
-  sl.registerFactory(() => ChatRoomCubit(sl(), sl()));
+  sl.registerFactory(() => ChatRoomCubit(sl(), sl(), sl()));
 
   /// MessageCubit
   sl.registerFactory(() => MessageCubit(sl(), sl()));

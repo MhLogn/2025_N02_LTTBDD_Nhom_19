@@ -100,6 +100,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
   }
@@ -133,6 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthRegisterSuccess) {
@@ -149,142 +151,269 @@ class _RegisterScreenState extends State<RegisterScreen> {
           }
         },
         builder: (context, state) {
-          if (state is AuthLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+          final isLoading = state is AuthLoading;
 
           return SafeArea(
-            child: Padding(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 60),
-                    Text(
-                      l10n.createAccount,
-                      style: theme.textTheme.headlineMedium,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 40),
+                  Text(
+                    l10n.createAccount,
+                    style: theme.textTheme.headlineMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.registerSubtitle,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.6),
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      l10n.registerSubtitle,
-                      style: theme.textTheme.bodyLarge,
-                    ),
-                    const SizedBox(height: 48),
-                    Text(l10n.fullName, style: theme.textTheme.titleSmall),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _fullNameController,
-                      decoration: InputDecoration(hintText: l10n.enterFullName),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(l10n.username, style: theme.textTheme.titleSmall),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _usernameController,
-                      decoration: InputDecoration(
-                        hintText: l10n.chooseUsername,
+                  ),
+                  const SizedBox(height: 40),
+                  Text(l10n.fullName, style: theme.textTheme.titleSmall),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _fullNameController,
+                    textInputAction: TextInputAction.next,
+                    enabled: !isLoading,
+                    decoration: InputDecoration(
+                      hintText: l10n.enterFullName,
+                      prefixIcon: Icon(
+                        Icons.person_outline,
+                        color: theme.colorScheme.onSurface.withOpacity(0.4),
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    Text(l10n.email, style: theme.textTheme.titleSmall),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(hintText: l10n.enterEmail),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(l10n.username, style: theme.textTheme.titleSmall),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _usernameController,
+                    textInputAction: TextInputAction.next,
+                    enabled: !isLoading,
+                    decoration: InputDecoration(
+                      hintText: l10n.chooseUsername,
+                      prefixIcon: Icon(
+                        Icons.badge_outlined,
+                        color: theme.colorScheme.onSurface.withOpacity(0.4),
+                      ),
                     ),
-                    const SizedBox(height: 20),
-                    Text(l10n.password, style: theme.textTheme.titleSmall),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _passwordController,
-                      obscureText: _obscurePassword,
-                      decoration: InputDecoration(
-                        hintText: l10n.createPassword,
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
-                            color: Colors.grey.shade500,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _obscurePassword = !_obscurePassword;
-                            });
-                          },
+                  ),
+                  const SizedBox(height: 20),
+                  Text(l10n.email, style: theme.textTheme.titleSmall),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    enabled: !isLoading,
+                    decoration: InputDecoration(
+                      hintText: l10n.enterEmail,
+                      prefixIcon: Icon(
+                        Icons.email_outlined,
+                        color: theme.colorScheme.onSurface.withOpacity(0.4),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(l10n.password, style: theme.textTheme.titleSmall),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: _obscurePassword,
+                    textInputAction: TextInputAction.next,
+                    enabled: !isLoading,
+                    decoration: InputDecoration(
+                      hintText: l10n.createPassword,
+                      prefixIcon: Icon(
+                        Icons.lock_outline_rounded,
+                        color: theme.colorScheme.onSurface.withOpacity(0.4),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: theme.colorScheme.onSurface.withOpacity(0.4),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      l10n.confirmPassword,
-                      style: theme.textTheme.titleSmall,
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _confirmPasswordController,
-                      obscureText: _obscureConfirmPassword,
-                      decoration: InputDecoration(
-                        hintText: l10n.reEnterPassword,
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscureConfirmPassword
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
-                            color: Colors.grey.shade500,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _obscureConfirmPassword =
-                                  !_obscureConfirmPassword;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () => _register(context),
-                        child: Text(l10n.register),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Center(
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const LoginScreen(),
-                            ),
-                          );
+                        onPressed: isLoading
+                            ? null
+                            : () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
                         },
-                        child: RichText(
-                          text: TextSpan(
-                            text: "${l10n.alreadyHaveAccount} ",
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    l10n.confirmPassword,
+                    style: theme.textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _confirmPasswordController,
+                    obscureText: _obscureConfirmPassword,
+                    textInputAction: TextInputAction.done,
+                    enabled: !isLoading,
+                    onSubmitted: (_) => isLoading ? null : _register(context),
+                    decoration: InputDecoration(
+                      hintText: l10n.reEnterPassword,
+                      prefixIcon: Icon(
+                        Icons.lock_outline_rounded,
+                        color: theme.colorScheme.onSurface.withOpacity(0.4),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureConfirmPassword
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: theme.colorScheme.onSurface.withOpacity(0.4),
+                        ),
+                        onPressed: isLoading
+                            ? null
+                            : () {
+                          setState(() {
+                            _obscureConfirmPassword =
+                            !_obscureConfirmPassword;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: isLoading ? null : () => _register(context),
+                      child: isLoading
+                          ? const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: Colors.white,
+                        ),
+                      )
+                          : Text(l10n.register),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          color: theme.colorScheme.onSurface.withOpacity(0.1),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          l10n.or,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          color: theme.colorScheme.onSurface.withOpacity(0.1),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: isLoading ? null : () {},
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: theme.scaffoldBackgroundColor,
+                            side: BorderSide(
+                              color: theme.colorScheme.onSurface.withOpacity(0.1),
                             ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              TextSpan(
-                                text: l10n.login,
-                                style: TextStyle(
-                                  color: theme.colorScheme.primary,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              Image.asset(
+                                'assets/images/google_logo.png',
+                                height: 24,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Google',
+                                style: theme.textTheme.titleSmall,
                               ),
                             ],
                           ),
                         ),
                       ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: isLoading ? null : () {},
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: theme.scaffoldBackgroundColor,
+                            side: BorderSide(
+                              color: theme.colorScheme.onSurface.withOpacity(0.1),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/facebook_logo.png',
+                                height: 24,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Facebook',
+                                style: theme.textTheme.titleSmall,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 40),
+                  Center(
+                    child: GestureDetector(
+                      onTap: isLoading
+                          ? null
+                          : () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const LoginScreen(),
+                          ),
+                        );
+                      },
+                      child: RichText(
+                        text: TextSpan(
+                          text: "${l10n.alreadyHaveAccount} ",
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          ),
+                          children: [
+                            TextSpan(
+                              text: l10n.login,
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 32),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 32),
+                ],
               ),
             ),
           );

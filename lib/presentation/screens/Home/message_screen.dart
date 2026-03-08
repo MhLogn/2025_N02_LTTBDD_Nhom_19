@@ -31,7 +31,7 @@ class MessageBubble extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04), // Bóng đổ cực nhẹ
+              color: Colors.black.withOpacity(0.04),
               blurRadius: 5,
               offset: const Offset(0, 2),
             ),

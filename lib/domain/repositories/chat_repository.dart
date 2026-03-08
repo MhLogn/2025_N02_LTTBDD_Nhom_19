@@ -12,4 +12,6 @@ abstract class ChatRoomRepository {
   });
 
   Future<void> resetUnreadCount(String roomId, String currentUserId);
+
+  Future<void> markMessagesSeen(String roomId, String currentUserId);
 }

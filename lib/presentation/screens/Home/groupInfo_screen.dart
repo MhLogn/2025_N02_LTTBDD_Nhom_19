@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_project/l10n/app_localizations.dart';
 
 class GroupInfoScreen extends StatelessWidget {
   const GroupInfoScreen({super.key});
@@ -6,6 +7,7 @@ class GroupInfoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FE),
@@ -22,7 +24,7 @@ class GroupInfoScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "Thông tin nhóm",
+          l10n.groupInfo,
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -35,23 +37,23 @@ class GroupInfoScreen extends StatelessWidget {
           children: [
             _buildInfoCard(
               theme,
-              title: "Học phần",
-              content: "LẬP TRÌNH CHO THIẾT BỊ DI ĐỘNG",
+              title: l10n.course,
+              content: l10n.courseName,
               icon: Icons.menu_book_rounded,
               color: Colors.blue,
             ),
             const SizedBox(height: 16),
             _buildInfoCard(
               theme,
-              title: "Đề tài",
-              content: "Chat Box – Ứng dụng nhắn tin",
+              title: l10n.projectTopic,
+              content: l10n.projectName,
               icon: Icons.chat_bubble_rounded,
               color: Colors.green,
             ),
             const SizedBox(height: 16),
             _buildInfoCard(
               theme,
-              title: "Lớp học",
+              title: l10n.className,
               content: "LTTBDD_N02",
               icon: Icons.class_rounded,
               color: Colors.orange,
@@ -59,22 +61,22 @@ class GroupInfoScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _buildInfoCard(
               theme,
-              title: "Giáo viên hướng dẫn",
-              content: "ThS: Nguyễn Xuân Quế",
+              title: l10n.teacher,
+              content: l10n.teacherName,
               icon: Icons.person_search_rounded,
               color: Colors.purple,
             ),
             const SizedBox(height: 16),
             _buildInfoCard(
               theme,
-              title: "Tên Nhóm",
-              content: "2025-LTTBDD-N02-Nhom_19",
+              title: l10n.groupName,
+              content: l10n.groupNameValue,
               icon: Icons.group_work_rounded,
               color: theme.colorScheme.primary,
             ),
             const SizedBox(height: 32),
             Text(
-              "Thành viên nhóm".toUpperCase(),
+              l10n.groupMembers.toUpperCase(),
               style: theme.textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.w700,
                 color: Colors.grey.shade600,

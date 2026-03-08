@@ -182,8 +182,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get online => 'Online';
 
   @override
-  String minutesAgo(Object minutes) {
-    return '${minutes}m';
+  String get offline => 'Offline';
+
+  @override
+  String get justOffline => 'Just went offline';
+
+  @override
+  String offlineMinutes(Object minutes) {
+    return 'Offline $minutes minutes ago';
+  }
+
+  @override
+  String offlineHours(Object hours) {
+    return 'Offline $hours hours ago';
+  }
+
+  @override
+  String offlineDays(Object days) {
+    return 'Offline $days days ago';
   }
 
   @override
@@ -200,4 +216,61 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cancel => 'Cancel';
+
+  @override
+  String get isYou => 'You';
+
+  @override
+  String get appUsers => 'App Users';
+
+  @override
+  String get chat => 'Chat';
+
+  @override
+  String get message => 'Enter your message...';
+
+  @override
+  String get profileUpdatedSuccessfully => 'Profile updated successfully';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get groupInfo => 'Group Info';
+
+  @override
+  String get course => 'Course';
+
+  @override
+  String get courseName => 'Mobile Application Development';
+
+  @override
+  String get projectTopic => 'Project Topic';
+
+  @override
+  String get projectName => 'Chat Box – Messaging Application';
+
+  @override
+  String get className => 'Class';
+
+  @override
+  String get teacher => 'Supervisor';
+
+  @override
+  String get teacherName => 'MSc: Nguyen Xuan Que';
+
+  @override
+  String get groupName => 'Group Name';
+
+  @override
+  String get groupNameValue => '2025-LTTBDD-N02-Group_19';
+
+  @override
+  String get groupMembers => 'Group Members';
+
+  @override
+  String get studentId => 'Student ID';
+
+  @override
+  String get or => 'Or';
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_project/core/di/injection.dart';
+import 'package:my_project/l10n/app_localizations.dart';
 import 'package:my_project/presentation/profile/profile_cubit.dart';
 import 'package:my_project/presentation/profile/profile_state.dart';
 
@@ -31,15 +32,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return BlocConsumer<ProfileCubit, ProfileState>(
+      listenWhen: (previous, current) =>
+          previous.isSuccess != current.isSuccess ||
+          previous.error != current.error,
       listener: (context, state) {
         if (state.isSuccess) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
-                content: const Text("Profile updated successfully"),
+                content: Text(l10n.profileUpdatedSuccessfully),
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -64,7 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
       },
       builder: (context, state) {
-        if (state.user != null) {
+        if (state.user != null && _fullNameController.text.isEmpty) {
           _fullNameController.text = state.user!.fullName;
           _usernameController.text = state.user!.username;
           _emailController.text = state.user!.email;
@@ -79,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             backgroundColor: Colors.white,
             centerTitle: false,
             title: Text(
-              "Profile",
+              l10n.profile,
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 letterSpacing: -0.5,
@@ -173,19 +178,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 48),
                     _buildTextField(
                       controller: _fullNameController,
-                      label: "Full Name",
+                      label: l10n.fullName,
                       theme: theme,
                     ),
                     const SizedBox(height: 20),
                     _buildTextField(
                       controller: _usernameController,
-                      label: "Username",
+                      label: l10n.username,
                       theme: theme,
                     ),
                     const SizedBox(height: 20),
                     _buildTextField(
                       controller: _emailController,
-                      label: "Email",
+                      label: l10n.email,
                       theme: theme,
                       isEmail: true,
                     ),
@@ -221,8 +226,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   color: Colors.white,
                                 ),
                               )
-                            : const Text(
-                                "Save Changes",
+                            : Text(
+                                l10n.saveChanges,
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,

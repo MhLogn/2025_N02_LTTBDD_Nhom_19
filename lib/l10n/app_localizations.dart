@@ -428,11 +428,35 @@ abstract class AppLocalizations {
   /// **'Online'**
   String get online;
 
-  /// No description provided for @minutesAgo.
+  /// No description provided for @offline.
   ///
   /// In en, this message translates to:
-  /// **'{minutes}m'**
-  String minutesAgo(Object minutes);
+  /// **'Offline'**
+  String get offline;
+
+  /// No description provided for @justOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Just went offline'**
+  String get justOffline;
+
+  /// No description provided for @offlineMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline {minutes} minutes ago'**
+  String offlineMinutes(Object minutes);
+
+  /// No description provided for @offlineHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline {hours} hours ago'**
+  String offlineHours(Object hours);
+
+  /// No description provided for @offlineDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline {days} days ago'**
+  String offlineDays(Object days);
 
   /// No description provided for @changeLanguage.
   ///
@@ -463,6 +487,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancel;
+
+  /// No description provided for @isYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get isYou;
+
+  /// No description provided for @appUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'App Users'**
+  String get appUsers;
+
+  /// No description provided for @chat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get chat;
+
+  /// No description provided for @message.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your message...'**
+  String get message;
+
+  /// No description provided for @profileUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully'**
+  String get profileUpdatedSuccessfully;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// No description provided for @groupInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Info'**
+  String get groupInfo;
+
+  /// No description provided for @course.
+  ///
+  /// In en, this message translates to:
+  /// **'Course'**
+  String get course;
+
+  /// No description provided for @courseName.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Application Development'**
+  String get courseName;
+
+  /// No description provided for @projectTopic.
+  ///
+  /// In en, this message translates to:
+  /// **'Project Topic'**
+  String get projectTopic;
+
+  /// No description provided for @projectName.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat Box – Messaging Application'**
+  String get projectName;
+
+  /// No description provided for @className.
+  ///
+  /// In en, this message translates to:
+  /// **'Class'**
+  String get className;
+
+  /// No description provided for @teacher.
+  ///
+  /// In en, this message translates to:
+  /// **'Supervisor'**
+  String get teacher;
+
+  /// No description provided for @teacherName.
+  ///
+  /// In en, this message translates to:
+  /// **'MSc: Nguyen Xuan Que'**
+  String get teacherName;
+
+  /// No description provided for @groupName.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Name'**
+  String get groupName;
+
+  /// No description provided for @groupNameValue.
+  ///
+  /// In en, this message translates to:
+  /// **'2025-LTTBDD-N02-Group_19'**
+  String get groupNameValue;
+
+  /// No description provided for @groupMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Members'**
+  String get groupMembers;
+
+  /// No description provided for @studentId.
+  ///
+  /// In en, this message translates to:
+  /// **'Student ID'**
+  String get studentId;
+
+  /// No description provided for @or.
+  ///
+  /// In en, this message translates to:
+  /// **'Or'**
+  String get or;
 }
 
 class _AppLocalizationsDelegate

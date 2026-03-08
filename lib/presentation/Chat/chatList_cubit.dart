@@ -12,4 +12,6 @@ class ChatCubit extends Cubit<List<UserEntity>> {
       emit(users);
     });
   }
+
+
 }

@@ -48,7 +48,7 @@ class SettingsScreen extends StatelessWidget {
             theme: theme,
             icon: Icons.info_outline_rounded,
             iconColor: Colors.blueAccent,
-            title: "Thông tin nhóm",
+            title: l10n.groupInfo,
             onTap: () {
               Navigator.push(
                 context,

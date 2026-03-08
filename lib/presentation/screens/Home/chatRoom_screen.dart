@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_project/domain/entities/message_entity.dart';
+import 'package:my_project/l10n/app_localizations.dart';
 import 'package:my_project/presentation/Chat/message_cubit.dart';
 import 'package:my_project/presentation/Chat/chatRoom_cubit.dart';
 import 'package:my_project/presentation/screens/Home/message_screen.dart';
@@ -31,6 +32,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       widget.roomId,
       widget.currentUserId,
     );
+    context.read<ChatRoomCubit>().markSeen(
+      widget.roomId,
+      widget.currentUserId,
+    );
   }
 
   void _send() async {
@@ -48,11 +53,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
-      // Sử dụng màu xám nhạt từ AppTheme
-      appBar: AppBar(title: const Text("Chat"), backgroundColor: Colors.white),
+      appBar: AppBar(title: Text(l10n.chat), backgroundColor: Colors.white),
       body: Column(
         children: [
           Expanded(
@@ -81,6 +86,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   }
 
   Widget _buildInputBar(ThemeData theme) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
       decoration: BoxDecoration(
@@ -99,7 +105,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             child: TextField(
               controller: _controller,
               decoration: InputDecoration(
-                hintText: "Nhập tin nhắn...",
+                hintText: l10n.message,
                 fillColor: theme.colorScheme.surface,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 20,

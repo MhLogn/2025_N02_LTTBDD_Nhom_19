@@ -31,6 +31,17 @@ class ChatRoomRepositoryImpl implements ChatRoomRepository {
   }
 
   @override
+  Future<void> markMessagesSeen(
+      String roomId,
+      String currentUserId,
+      ) {
+    return dataSource.markMessagesSeen(
+      roomId,
+      currentUserId,
+    );
+  }
+
+  @override
   Future<void> resetUnreadCount(String roomId, String currentUserId) async {
     return await dataSource.resetUnreadCount(roomId, currentUserId);
   }

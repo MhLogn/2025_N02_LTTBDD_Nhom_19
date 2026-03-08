@@ -12,6 +12,7 @@ class AuthScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -23,28 +24,31 @@ class AuthScreen extends StatelessWidget {
                   children: [
                     Image.asset(
                       "assets/images/app_logo.png",
-                      height: 100,
+                      height: 120,
                       fit: BoxFit.contain,
                     ),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 48),
                     Text(
                       l10n.appName,
                       style: theme.textTheme.headlineMedium?.copyWith(
                         color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.w800,
                       ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     Text(
                       l10n.authTagline,
-                      style: theme.textTheme.bodyLarge,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 24),
+                padding: const EdgeInsets.only(bottom: 32),
                 child: Column(
                   children: [
                     SizedBox(

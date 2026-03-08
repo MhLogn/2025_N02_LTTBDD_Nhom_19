@@ -168,7 +168,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get home => 'Trang chủ';
 
   @override
-  String get profile => 'Trang cá nhân';
+  String get profile => 'Hồ sơ';
 
   @override
   String get settings => 'Cài đặt';
@@ -180,8 +180,24 @@ class AppLocalizationsVi extends AppLocalizations {
   String get online => 'Đang hoạt động';
 
   @override
-  String minutesAgo(Object minutes) {
-    return '${minutes}p';
+  String get offline => 'Không hoạt động';
+
+  @override
+  String get justOffline => 'Vừa offline';
+
+  @override
+  String offlineMinutes(Object minutes) {
+    return 'Offline $minutes phút trước';
+  }
+
+  @override
+  String offlineHours(Object hours) {
+    return 'Offline $hours giờ trước';
+  }
+
+  @override
+  String offlineDays(Object days) {
+    return 'Offline $days ngày trước';
   }
 
   @override
@@ -198,4 +214,61 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get cancel => 'Hủy';
+
+  @override
+  String get isYou => 'Bạn';
+
+  @override
+  String get appUsers => 'Người dùng ứng dụng';
+
+  @override
+  String get chat => 'Hộp thoại';
+
+  @override
+  String get message => 'Nhập tin nhắn...';
+
+  @override
+  String get profileUpdatedSuccessfully => 'Cập nhật hồ sơ thành công';
+
+  @override
+  String get saveChanges => 'Lưu thay đổi';
+
+  @override
+  String get groupInfo => 'Thông tin nhóm';
+
+  @override
+  String get course => 'Học phần';
+
+  @override
+  String get courseName => 'Lập trình cho thiết bị di động';
+
+  @override
+  String get projectTopic => 'Đề tài';
+
+  @override
+  String get projectName => 'Chat Box – Ứng dụng nhắn tin';
+
+  @override
+  String get className => 'Lớp học';
+
+  @override
+  String get teacher => 'Giáo viên hướng dẫn';
+
+  @override
+  String get teacherName => 'ThS: Nguyễn Xuân Quế';
+
+  @override
+  String get groupName => 'Tên nhóm';
+
+  @override
+  String get groupNameValue => '2025-LTTBDD-N02-Nhom_19';
+
+  @override
+  String get groupMembers => 'Thành viên nhóm';
+
+  @override
+  String get studentId => 'MSSV';
+
+  @override
+  String get or => 'Hoặc';
 }
