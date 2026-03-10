@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:my_project/domain/entities/message_entity.dart';
+import 'package:my_project/domain/entities/user_entity.dart';
 import 'package:my_project/l10n/app_localizations.dart';
 import 'package:my_project/presentation/Chat/message_cubit.dart';
 import 'package:my_project/presentation/Chat/chatRoom_cubit.dart';
@@ -10,11 +13,13 @@ import 'package:my_project/presentation/screens/Home/message_screen.dart';
 class ChatRoomScreen extends StatefulWidget {
   final String roomId;
   final String currentUserId;
+  final UserEntity otherUser;
 
   const ChatRoomScreen({
     super.key,
     required this.roomId,
     required this.currentUserId,
+    required this.otherUser,
   });
 
   @override
@@ -50,6 +55,25 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         date1.day == date2.day;
   }
 
+  String _buildStatus(UserEntity user, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    if (user.isOnline) return l10n.online;
+    if (user.lastSeen == null) return l10n.offline;
+
+    final diff = DateTime.now().difference(user.lastSeen!);
+
+    if (diff.inSeconds < 60) {
+      return l10n.justOffline;
+    } else if (diff.inMinutes < 60) {
+      return l10n.offlineMinutes(diff.inMinutes);
+    } else if (diff.inHours < 24) {
+      return l10n.offlineHours(diff.inHours);
+    } else {
+      return l10n.offlineDays(diff.inDays);
+    }
+  }
+
   void _send() async {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
@@ -82,14 +106,73 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final otherUser = widget.otherUser;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        title: Text(l10n.chat),
+        toolbarHeight: 75,
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         scrolledUnderElevation: 0,
+        titleSpacing: 0,
+        title: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: theme.colorScheme.secondary,
+                image:
+                    otherUser.photoUrl != null && otherUser.photoUrl!.isNotEmpty
+                    ? DecorationImage(
+                        image: MemoryImage(base64Decode(otherUser.photoUrl!)),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+              ),
+              alignment: Alignment.center,
+              child: otherUser.photoUrl == null || otherUser.photoUrl!.isEmpty
+                  ? Text(
+                      otherUser.fullName.isNotEmpty
+                          ? otherUser.fullName[0].toUpperCase()
+                          : "?",
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  : null,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    otherUser.fullName,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    _buildStatus(otherUser, context),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: otherUser.isOnline
+                          ? const Color(0xFF10B981)
+                          : theme.colorScheme.onSurface.withOpacity(0.5),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       body: BlocListener<MessageCubit, List<MessageEntity>>(
         listener: (context, messages) {
@@ -240,11 +323,19 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                   ],
                 ),
               ),
-
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+              padding: const EdgeInsets.fromLTRB(8, 12, 16, 12),
               child: Row(
                 children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.image_rounded,
+                      color: theme.colorScheme.primary,
+                      size: 28,
+                    ),
+                    onPressed: () {},
+                  ),
+                  const SizedBox(width: 4),
                   Expanded(
                     child: TextField(
                       controller: _controller,

@@ -74,6 +74,7 @@ class ChatRoomFirestoreDataSource {
       transaction.update(roomRef, {
         'lastMessage': content,
         'lastMessageTime': Timestamp.now(),
+        'lastSenderId': senderId,
         'unreadCounts.$receiverId': FieldValue.increment(1),
       });
     });

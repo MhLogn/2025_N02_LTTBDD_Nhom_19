@@ -45,8 +45,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return BlocConsumer<ProfileCubit, ProfileState>(
       listenWhen: (previous, current) =>
           previous.isSuccess != current.isSuccess ||
-          previous.error != current.error,
+          previous.error != current.error ||
+          previous.user != current.user,
       listener: (context, state) {
+        if (state.user != null) {
+          if (_fullNameController.text != state.user!.fullName) {
+            _fullNameController.text = state.user!.fullName;
+          }
+          if (_usernameController.text != state.user!.username) {
+            _usernameController.text = state.user!.username;
+          }
+          if (_emailController.text != state.user!.email) {
+            _emailController.text = state.user!.email;
+          }
+          photoUrl = state.user!.photoUrl;
+        }
+
         if (state.isSuccess) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
@@ -78,13 +92,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
       },
       builder: (context, state) {
-        if (state.user != null && _fullNameController.text.isEmpty) {
-          _fullNameController.text = state.user!.fullName;
-          _usernameController.text = state.user!.username;
-          _emailController.text = state.user!.email;
-          photoUrl = state.user!.photoUrl;
-        }
-
         final isLoading = state.isLoading;
 
         return Scaffold(

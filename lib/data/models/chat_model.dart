@@ -10,21 +10,17 @@ class ChatRoomModel extends ChatRoomEntity {
     super.lastMessage,
     super.lastMessageTime,
     required this.unreadCounts,
+    super.lastSenderId,
   });
 
-  factory ChatRoomModel.fromFirestore(
-      Map<String, dynamic> data,
-      String id,
-      ) {
+  factory ChatRoomModel.fromFirestore(Map<String, dynamic> data, String id) {
     return ChatRoomModel(
       id: id,
       members: List<String>.from(data['members']),
       lastMessage: data['lastMessage'],
-      lastMessageTime:
-      (data['lastMessageTime'] as Timestamp?)?.toDate(),
-      unreadCounts: Map<String, int>.from(
-        data['unreadCounts'] ?? {},
-      )
+      lastMessageTime: (data['lastMessageTime'] as Timestamp?)?.toDate(),
+      lastSenderId: data['lastSenderId'] as String?,
+      unreadCounts: Map<String, int>.from(data['unreadCounts'] ?? {}),
     );
   }
 }

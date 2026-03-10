@@ -10,11 +10,15 @@ class UserChatRoomItem {
   final UserEntity user;
   final int unreadCount;
   final DateTime? lastMessageTime;
+  final String? lastMessage;
+  final String? lastSenderId;
 
   UserChatRoomItem({
     required this.user,
     required this.unreadCount,
     this.lastMessageTime,
+    this.lastMessage,
+    this.lastSenderId,
   });
 }
 
@@ -109,6 +113,8 @@ class ChatCubit extends Cubit<ChatCubitState> {
 
       int unread = 0;
       DateTime? time;
+      String? lastMsg;
+      String? lastSender;
 
       if (foundRoom != null) {
         final unreadMap = foundRoom.unreadCounts as Map<String, dynamic>?;
@@ -116,6 +122,8 @@ class ChatCubit extends Cubit<ChatCubitState> {
           unread = (unreadMap[currentUserId] ?? 0) as int;
         }
         time = foundRoom.lastMessageTime;
+        lastMsg = foundRoom.lastMessage;
+        lastSender = foundRoom.lastSenderId;
       }
 
       items.add(
@@ -123,6 +131,8 @@ class ChatCubit extends Cubit<ChatCubitState> {
           user: user,
           unreadCount: unread,
           lastMessageTime: time,
+          lastMessage: lastMsg,
+          lastSenderId: lastSender,
         ),
       );
     }
@@ -137,7 +147,7 @@ class ChatCubit extends Cubit<ChatCubitState> {
     emit(
       ChatCubitState(
         isLoading: false,
-        currentUser: state.currentUser,
+        currentUser: updatedCurrentUser,
         chatItems: items,
       ),
     );
