@@ -18,7 +18,7 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
+  final List<Widget> _screens = const [
     ChatListScreen(),
     ProfileScreen(),
     SettingsScreen(),
@@ -40,86 +40,62 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
-        body: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          switchInCurve: Curves.easeIn,
-          switchOutCurve: Curves.easeOut,
-          child: _screens[_currentIndex],
-        ),
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: IndexedStack(index: _currentIndex, children: _screens),
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.scaffoldBackgroundColor,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: theme.colorScheme.onSurface.withOpacity(0.04),
                 blurRadius: 24,
                 offset: const Offset(0, -8),
               ),
             ],
           ),
           child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8.0,
-                vertical: 4.0,
-              ),
-              child: BottomNavigationBar(
-                currentIndex: _currentIndex,
-                onTap: (index) {
-                  setState(() {
-                    _currentIndex = index;
-                  });
-                },
-                backgroundColor: Colors.white,
-                elevation: 0,
-                type: BottomNavigationBarType.fixed,
-                selectedItemColor: theme.colorScheme.primary,
-                unselectedItemColor: Colors.grey.shade400,
-                selectedLabelStyle: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 12,
+            child: BottomNavigationBar(
+              currentIndex: _currentIndex,
+              onTap: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              items: [
+                BottomNavigationBarItem(
+                  icon: const Padding(
+                    padding: EdgeInsets.only(bottom: 6.0),
+                    child: Icon(Icons.chat_bubble_outline_rounded),
+                  ),
+                  activeIcon: const Padding(
+                    padding: EdgeInsets.only(bottom: 6.0),
+                    child: Icon(Icons.chat_bubble_rounded),
+                  ),
+                  label: l10n.home,
                 ),
-                unselectedLabelStyle: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12,
+                BottomNavigationBarItem(
+                  icon: const Padding(
+                    padding: EdgeInsets.only(bottom: 6.0),
+                    child: Icon(Icons.person_outline_rounded),
+                  ),
+                  activeIcon: const Padding(
+                    padding: EdgeInsets.only(bottom: 6.0),
+                    child: Icon(Icons.person_rounded),
+                  ),
+                  label: l10n.profile,
                 ),
-                items: [
-                  BottomNavigationBarItem(
-                    icon: const Padding(
-                      padding: EdgeInsets.only(bottom: 6.0),
-                      child: Icon(Icons.home_outlined),
-                    ),
-                    activeIcon: const Padding(
-                      padding: EdgeInsets.only(bottom: 6.0),
-                      child: Icon(Icons.home_rounded),
-                    ),
-                    label: l10n.home,
+                BottomNavigationBarItem(
+                  icon: const Padding(
+                    padding: EdgeInsets.only(bottom: 6.0),
+                    child: Icon(Icons.settings_outlined),
                   ),
-                  BottomNavigationBarItem(
-                    icon: const Padding(
-                      padding: EdgeInsets.only(bottom: 6.0),
-                      child: Icon(Icons.person_outline_rounded),
-                    ),
-                    activeIcon: const Padding(
-                      padding: EdgeInsets.only(bottom: 6.0),
-                      child: Icon(Icons.person_rounded),
-                    ),
-                    label: l10n.profile,
+                  activeIcon: const Padding(
+                    padding: EdgeInsets.only(bottom: 6.0),
+                    child: Icon(Icons.settings_rounded),
                   ),
-                  BottomNavigationBarItem(
-                    icon: const Padding(
-                      padding: EdgeInsets.only(bottom: 6.0),
-                      child: Icon(Icons.settings_outlined),
-                    ),
-                    activeIcon: const Padding(
-                      padding: EdgeInsets.only(bottom: 6.0),
-                      child: Icon(Icons.settings_rounded),
-                    ),
-                    label: l10n.settings,
-                  ),
-                ],
-              ),
+                  label: l10n.settings,
+                ),
+              ],
             ),
           ),
         ),

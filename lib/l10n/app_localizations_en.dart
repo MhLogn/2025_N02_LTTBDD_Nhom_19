@@ -273,4 +273,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get or => 'Or';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get replyto => 'Reply';
 }

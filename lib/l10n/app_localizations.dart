@@ -601,6 +601,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Or'**
   String get or;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
+  /// No description provided for @replyto.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get replyto;
 }
 
 class _AppLocalizationsDelegate

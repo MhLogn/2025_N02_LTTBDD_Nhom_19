@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_project/core/di/injection.dart';
 import 'package:my_project/domain/entities/user_entity.dart';
-import 'package:my_project/domain/repositories/auth_repository.dart';
 import 'package:my_project/l10n/app_localizations.dart';
 import 'package:my_project/presentation/Chat/chatList_cubit.dart';
 import 'package:my_project/presentation/Chat/chatRoom_cubit.dart';
@@ -17,22 +16,10 @@ class ChatListScreen extends StatefulWidget {
 }
 
 class _ChatListScreenState extends State<ChatListScreen> {
-  UserEntity? currentUser;
-
   @override
   void initState() {
     super.initState();
-    _init();
-  }
-
-  Future<void> _init() async {
-    final authRepo = sl<AuthRepository>();
-    currentUser = await authRepo.getCurrentUser();
-
-    if (mounted) {
-      context.read<ChatCubit>().loadUsers();
-      setState(() {});
-    }
+    context.read<ChatCubit>().init();
   }
 
   @override
@@ -41,43 +28,49 @@ class _ChatListScreenState extends State<ChatListScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
-      appBar: AppBar(title: const Text("Chat Box")),
-      body: BlocBuilder<ChatCubit, List<UserEntity>>(
-        builder: (context, users) {
-          if (users.isEmpty || currentUser == null) {
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(title: Text(l10n.appName)),
+      body: BlocBuilder<ChatCubit, ChatCubitState>(
+        builder: (context, state) {
+          if (state.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state.currentUser == null) {
             return Center(
               child: Text(
                 l10n.noUsersFound,
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey.shade500,
+                  color: theme.colorScheme.onSurface.withOpacity(0.5),
                 ),
               ),
             );
           }
 
-          final me = users.firstWhere((u) => u.id == currentUser!.id);
-          final otherUsers =
-              users.where((u) => u.id != currentUser!.id).toList()
-                ..sort((a, b) {
-                  final aIds = [currentUser!.id, a.id]..sort();
-                  final bIds = [currentUser!.id, b.id]..sort();
-
-                  final aRoom = "${aIds[0]}_${aIds[1]}";
-                  final bRoom = "${bIds[0]}_${bIds[1]}";
-
-                  return bRoom.compareTo(aRoom);
-                });
+          final me = state.currentUser!;
+          final chatItems = state.chatItems;
 
           return ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             children: [
               _buildSectionTitle(l10n.isYou, theme),
-              _buildUserTile(me, theme, isMe: true),
-              if (otherUsers.isNotEmpty) ...[
+              _buildUserTile(
+                user: me,
+                theme: theme,
+                currentUserId: me.id,
+                isMe: true,
+              ),
+              if (chatItems.isNotEmpty) ...[
                 const SizedBox(height: 24),
                 _buildSectionTitle(l10n.appUsers, theme),
-                ...otherUsers.map((user) => _buildUserTile(user, theme)),
+                ...chatItems.map(
+                  (item) => _buildUserTile(
+                    user: item.user,
+                    theme: theme,
+                    currentUserId: me.id,
+                    unread: item.unreadCount,
+                  ),
+                ),
               ],
               const SizedBox(height: 24),
             ],
@@ -89,85 +82,43 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
   Widget _buildSectionTitle(String title, ThemeData theme) {
     return Padding(
-      padding: const EdgeInsets.only(left: 8, bottom: 12),
+      padding: const EdgeInsets.only(left: 4, bottom: 16),
       child: Text(
         title.toUpperCase(),
-        style: theme.textTheme.labelMedium?.copyWith(
-          fontWeight: FontWeight.w700,
-          color: Colors.grey.shade500,
+        style: theme.textTheme.labelLarge?.copyWith(
+          fontWeight: FontWeight.w800,
+          color: theme.colorScheme.onSurface.withOpacity(0.4),
           letterSpacing: 1.2,
         ),
       ),
     );
   }
 
-  Widget _buildUserTile(UserEntity user, ThemeData theme, {bool isMe = false}) {
+  Widget _buildUserTile({
+    required UserEntity user,
+    required ThemeData theme,
+    required String currentUserId,
+    bool isMe = false,
+    int unread = 0,
+  }) {
     final isOnline = user.isOnline;
 
-    if (isMe) {
-      return _buildUserTileContent(user, isOnline, 0, theme, isMe: true);
-    }
-
-    final sortedIds = [currentUser!.id, user.id]..sort();
-    final roomId = "${sortedIds[0]}_${sortedIds[1]}";
-
-    return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('chat_rooms')
-          .doc(roomId)
-          .snapshots(),
-      builder: (context, snapshot) {
-        int unread = 0;
-        DateTime? lastMessageTime;
-
-        if (snapshot.hasData && snapshot.data!.exists) {
-          final data = snapshot.data!.data() as Map<String, dynamic>;
-
-          final unreadMap = data['unreadCounts'] as Map<String, dynamic>?;
-          if (unreadMap != null) {
-            unread = unreadMap[currentUser!.id] ?? 0;
-          }
-
-          if (data['lastMessageTime'] != null) {
-            lastMessageTime = (data['lastMessageTime'] as Timestamp).toDate();
-          }
-        }
-
-        return _buildUserTileContent(
-          user,
-          isOnline,
-          unread,
-          theme,
-          lastMessageTime: lastMessageTime,
-        );
-      },
-    );
-  }
-
-  Widget _buildUserTileContent(
-    UserEntity user,
-    bool isOnline,
-    int unread,
-    ThemeData theme, {
-    bool isMe = false,
-    DateTime? lastMessageTime,
-  }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
+            color: theme.colorScheme.onSurface.withOpacity(0.04),
+            blurRadius: 16,
             offset: const Offset(0, 4),
           ),
         ],
         border: Border.all(
           color: isMe
-              ? theme.colorScheme.primary.withOpacity(0.2)
-              : Colors.transparent,
+              ? theme.colorScheme.primary.withOpacity(0.3)
+              : theme.colorScheme.onSurface.withOpacity(0.05),
           width: 1.5,
         ),
       ),
@@ -182,13 +133,13 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   final result = await context.read<ChatRoomCubit>().createRoom(
                     user.id,
                   );
-
+                  if (!context.mounted) return;
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => ChatRoomScreen(
                         roomId: result.roomId,
-                        currentUserId: currentUser!.id,
+                        currentUserId: currentUserId,
                       ),
                     ),
                   );
@@ -206,23 +157,24 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         shape: BoxShape.circle,
                         color: isMe
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.primary.withOpacity(0.1),
-                        image: user.photoUrl != null
+                            : theme.colorScheme.secondary,
+                        image:
+                            user.photoUrl != null && user.photoUrl!.isNotEmpty
                             ? DecorationImage(
-                                image: NetworkImage(user.photoUrl!),
+                                image: MemoryImage(
+                                  base64Decode(user.photoUrl!),
+                                ),
                                 fit: BoxFit.cover,
                               )
                             : null,
                       ),
                       alignment: Alignment.center,
-                      child: user.photoUrl == null
+                      child: user.photoUrl == null || user.photoUrl!.isEmpty
                           ? Text(
                               user.fullName.isNotEmpty
                                   ? user.fullName[0].toUpperCase()
                                   : "?",
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
+                              style: theme.textTheme.titleLarge?.copyWith(
                                 color: isMe
                                     ? theme.colorScheme.onPrimary
                                     : theme.colorScheme.primary,
@@ -238,9 +190,12 @@ class _ChatListScreenState extends State<ChatListScreen> {
                           width: 16,
                           height: 16,
                           decoration: BoxDecoration(
-                            color: Colors.green.shade400,
+                            color: const Color(0xFF10B981),
                             shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2.5),
+                            border: Border.all(
+                              color: theme.scaffoldBackgroundColor,
+                              width: 2.5,
+                            ),
                           ),
                         ),
                       ),
@@ -254,50 +209,46 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       Text(
                         user.fullName,
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
                           color: isMe
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withOpacity(0.9),
+                              : theme.colorScheme.onSurface,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-
                       const SizedBox(height: 4),
-
                       Row(
                         children: [
                           Text(
                             "@${user.username}",
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-
                           const SizedBox(width: 8),
-
                           Container(
                             width: 4,
                             height: 4,
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.outlineVariant,
+                              color: theme.colorScheme.onSurface.withOpacity(
+                                0.3,
+                              ),
                               shape: BoxShape.circle,
                             ),
                           ),
-
                           const SizedBox(width: 8),
-
                           Expanded(
                             child: Text(
-                              _buildStatus(user),
+                              _buildStatus(user, context),
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: isOnline
                                     ? (isMe
-                                          ? Colors.green.shade600
-                                          : Colors.grey.shade500)
-                                    : theme.colorScheme.onSurfaceVariant
-                                          .withOpacity(0.7),
+                                          ? const Color(0xFF10B981)
+                                          : theme.colorScheme.onSurface
+                                                .withOpacity(0.5))
+                                    : theme.colorScheme.onSurface.withOpacity(
+                                        0.5,
+                                      ),
                                 fontWeight: isOnline
                                     ? FontWeight.w600
                                     : FontWeight.normal,
@@ -321,18 +272,16 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: theme.colorScheme.error.withOpacity(0.3),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
+                          color: theme.colorScheme.error.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
                     child: Text(
                       unread > 99 ? "99+" : unread.toString(),
-                      style: const TextStyle(
+                      style: theme.textTheme.labelLarge?.copyWith(
                         color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w900,
                       ),
                     ),
                   ),
@@ -344,7 +293,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     );
   }
 
-  String _buildStatus(UserEntity user) {
+  String _buildStatus(UserEntity user, BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
     if (user.isOnline) return l10n.online;

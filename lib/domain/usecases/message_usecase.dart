@@ -7,7 +7,7 @@ class SendMessageUseCase {
 
   SendMessageUseCase(this.repository, this.authRepository);
 
-  Future<void> call(String roomId, String content) async {
+  Future<void> call(String roomId, String content, {String? replyTo}) async {
     final currentUser = await authRepository.getCurrentUser();
 
     if (currentUser == null) {
@@ -18,6 +18,7 @@ class SendMessageUseCase {
       roomId: roomId,
       senderId: currentUser.id,
       content: content,
+      replyTo: replyTo,
     );
   }
 }

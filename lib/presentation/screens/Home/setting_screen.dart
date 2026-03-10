@@ -5,6 +5,8 @@ import 'package:my_project/presentation/auth/cubit/auth_cubit.dart';
 import 'package:my_project/presentation/language/locale_cubit.dart';
 import 'package:my_project/presentation/screens/Home/groupInfo_screen.dart';
 
+import '../../Chat/chatList_cubit.dart';
+
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
@@ -15,19 +17,10 @@ class SettingsScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        backgroundColor: Colors.white,
-        centerTitle: false,
-        title: Text(
-          l10n.settings,
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            letterSpacing: -0.5,
-          ),
-        ),
+        backgroundColor: theme.scaffoldBackgroundColor,
+        title: Text(l10n.settings, style: theme.textTheme.headlineSmall),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -47,7 +40,7 @@ class SettingsScreen extends StatelessWidget {
             context: context,
             theme: theme,
             icon: Icons.info_outline_rounded,
-            iconColor: Colors.blueAccent,
+            iconColor: theme.colorScheme.secondary,
             title: l10n.groupInfo,
             onTap: () {
               Navigator.push(
@@ -66,6 +59,7 @@ class SettingsScreen extends StatelessWidget {
             textColor: theme.colorScheme.error,
             hideArrow: true,
             onTap: () {
+              context.read<ChatCubit>().clearDataOnLogout();
               context.read<AuthCubit>().logout();
             },
           ),
@@ -86,15 +80,19 @@ class SettingsScreen extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
+            color: theme.colorScheme.onSurface.withOpacity(0.04),
+            blurRadius: 16,
             offset: const Offset(0, 4),
           ),
         ],
+        border: Border.all(
+          color: theme.colorScheme.onSurface.withOpacity(0.05),
+          width: 1.5,
+        ),
       ),
       child: Material(
         color: Colors.transparent,
@@ -109,12 +107,16 @@ class SettingsScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: iconColor.withOpacity(0.1),
+                    color: iconColor == theme.colorScheme.secondary
+                        ? theme.colorScheme.primary.withOpacity(0.1)
+                        : iconColor.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     icon,
-                    color: iconColor,
+                    color: iconColor == theme.colorScheme.secondary
+                        ? theme.colorScheme.primary
+                        : iconColor,
                     size: 24,
                   ),
                 ),
@@ -123,15 +125,14 @@ class SettingsScreen extends StatelessWidget {
                   child: Text(
                     title,
                     style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: textColor ?? Colors.black87,
+                      color: textColor ?? theme.colorScheme.onSurface,
                     ),
                   ),
                 ),
                 if (!hideArrow)
                   Icon(
                     Icons.arrow_forward_ios_rounded,
-                    color: Colors.grey.shade300,
+                    color: theme.colorScheme.onSurface.withOpacity(0.3),
                     size: 18,
                   ),
               ],
@@ -143,31 +144,23 @@ class SettingsScreen extends StatelessWidget {
   }
 
   void _showLanguageDialog(
-      BuildContext context,
-      LocaleCubit localeCubit,
-      AppLocalizations l10n,
-      ThemeData theme,
-      ) {
+    BuildContext context,
+    LocaleCubit localeCubit,
+    AppLocalizations l10n,
+    ThemeData theme,
+  ) {
     showDialog(
       context: context,
       builder: (_) => Dialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
+        backgroundColor: theme.scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                l10n.selectLanguage,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.5,
-                ),
-              ),
+              Text(l10n.selectLanguage, style: theme.textTheme.titleLarge),
               const SizedBox(height: 24),
               _buildLanguageOption(
                 context: context,
@@ -212,10 +205,14 @@ class SettingsScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
-          color: isSelected ? theme.colorScheme.primary.withOpacity(0.08) : Colors.transparent,
+          color: isSelected
+              ? theme.colorScheme.primary.withOpacity(0.08)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? theme.colorScheme.primary : Colors.grey.shade200,
+            color: isSelected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.onSurface.withOpacity(0.1),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -228,7 +225,9 @@ class SettingsScreen extends StatelessWidget {
                 title,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                  color: isSelected ? theme.colorScheme.primary : Colors.black87,
+                  color: isSelected
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurface,
                 ),
               ),
             ),

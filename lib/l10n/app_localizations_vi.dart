@@ -271,4 +271,13 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get or => 'Hoặc';
+
+  @override
+  String get today => 'Hôm nay';
+
+  @override
+  String get yesterday => 'Hôm qua';
+
+  @override
+  String get replyto => 'Trả lời';
 }

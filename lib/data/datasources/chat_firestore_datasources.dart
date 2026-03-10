@@ -49,6 +49,7 @@ class ChatRoomFirestoreDataSource {
     required String roomId,
     required String senderId,
     required String content,
+    String? replyTo,
   }) async {
     final roomRef = firestore.collection('chat_rooms').doc(roomId);
 
@@ -67,6 +68,7 @@ class ChatRoomFirestoreDataSource {
         'createdAt': Timestamp.now(),
         'isSeen': false,
         'seenAt': null,
+        'replyTo': replyTo,
       });
 
       transaction.update(roomRef, {
@@ -83,6 +85,16 @@ class ChatRoomFirestoreDataSource {
     });
 
     await markMessagesSeen(roomId, currentUserId);
+  }
+
+  Stream<List<ChatRoomModel>> getUserChatRooms(String userId) {
+    return firestore
+        .collection('chat_rooms')
+        .where('members', arrayContains: userId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) => ChatRoomModel.fromFirestore(doc.data(), doc.id)).toList();
+    });
   }
 
   Future<void> markMessagesSeen(String roomId, String currentUserId) async {

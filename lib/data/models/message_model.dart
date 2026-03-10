@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/message_entity.dart';
 
@@ -9,6 +11,7 @@ class MessageModel extends MessageEntity {
     required super.createdAt,
     required super.isSeen,
     super.seenAt,
+    super.replyTo,
   });
 
   factory MessageModel.fromSnapshot(DocumentSnapshot doc) {
@@ -23,6 +26,7 @@ class MessageModel extends MessageEntity {
       seenAt: data['seenAt'] != null
           ? (data['seenAt'] as Timestamp).toDate()
           : null,
+      replyTo: data['replyTo'] as String?,
     );
   }
 
@@ -33,6 +37,7 @@ class MessageModel extends MessageEntity {
       'createdAt': Timestamp.fromDate(createdAt),
       'isSeen': isSeen,
       'seenAt': seenAt != null ? Timestamp.fromDate(seenAt!) : null,
+      'replyTo': replyTo,
     };
   }
 }

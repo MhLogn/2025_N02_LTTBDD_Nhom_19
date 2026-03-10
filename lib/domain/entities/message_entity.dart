@@ -5,6 +5,7 @@ class MessageEntity {
   final DateTime createdAt;
   final bool isSeen;
   final DateTime? seenAt;
+  final String? replyTo;
 
   MessageEntity({
     required this.id,
@@ -13,5 +14,6 @@ class MessageEntity {
     required this.createdAt,
     required this.isSeen,
     this.seenAt,
+    this.replyTo,
   });
 }

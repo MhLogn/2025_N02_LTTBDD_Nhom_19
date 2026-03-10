@@ -30,6 +30,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   @override
+  void dispose() {
+    _fullNameController.dispose();
+    _usernameController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
@@ -46,6 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SnackBar(
                 content: Text(l10n.profileUpdatedSuccessfully),
                 behavior: SnackBarBehavior.floating,
+                backgroundColor: const Color(0xFF10B981),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -76,20 +85,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           photoUrl = state.user!.photoUrl;
         }
 
+        final isLoading = state.isLoading;
+
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: theme.scaffoldBackgroundColor,
           appBar: AppBar(
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            backgroundColor: Colors.white,
-            centerTitle: false,
-            title: Text(
-              l10n.profile,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                letterSpacing: -0.5,
-              ),
-            ),
+            backgroundColor: theme.scaffoldBackgroundColor,
+            title: Text(l10n.profile, style: theme.textTheme.headlineSmall),
           ),
           body: Stack(
             children: [
@@ -102,21 +104,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Center(
                       child: GestureDetector(
-                        onTap: () async {
-                          final picker = ImagePicker();
-                          final picked = await picker.pickImage(
-                            source: ImageSource.gallery,
-                          );
+                        onTap: isLoading
+                            ? null
+                            : () async {
+                                final picker = ImagePicker();
+                                final picked = await picker.pickImage(
+                                  source: ImageSource.gallery,
+                                );
 
-                          if (picked == null) return;
+                                if (picked == null) return;
 
-                          final bytes = await File(picked.path).readAsBytes();
-                          final base64Image = base64Encode(bytes);
+                                final bytes = await File(
+                                  picked.path,
+                                ).readAsBytes();
+                                final base64Image = base64Encode(bytes);
 
-                          setState(() {
-                            photoUrl = base64Image;
-                          });
-                        },
+                                setState(() {
+                                  photoUrl = base64Image;
+                                });
+                              },
                         child: Stack(
                           children: [
                             Container(
@@ -124,9 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               height: 120,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: theme.colorScheme.primary.withOpacity(
-                                  0.1,
-                                ),
+                                color: theme.colorScheme.secondary,
                                 image: photoUrl != null
                                     ? DecorationImage(
                                         image: MemoryImage(
@@ -139,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: photoUrl == null
                                   ? Icon(
                                       Icons.person_rounded,
-                                      size: 60,
+                                      size: 56,
                                       color: theme.colorScheme.primary,
                                     )
                                   : null,
@@ -153,21 +157,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   color: theme.colorScheme.primary,
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: Colors.white,
+                                    color: theme.scaffoldBackgroundColor,
                                     width: 3,
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
+                                      color: theme.colorScheme.primary
+                                          .withOpacity(0.3),
                                       blurRadius: 8,
                                       offset: const Offset(0, 4),
                                     ),
                                   ],
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.camera_alt_rounded,
                                   size: 20,
-                                  color: Colors.white,
+                                  color: theme.colorScheme.onPrimary,
                                 ),
                               ),
                             ),
@@ -179,35 +184,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildTextField(
                       controller: _fullNameController,
                       label: l10n.fullName,
+                      icon: Icons.person_outline_rounded,
                       theme: theme,
+                      enabled: !isLoading,
                     ),
                     const SizedBox(height: 20),
                     _buildTextField(
                       controller: _usernameController,
                       label: l10n.username,
+                      icon: Icons.badge_outlined,
                       theme: theme,
+                      enabled: !isLoading,
                     ),
                     const SizedBox(height: 20),
                     _buildTextField(
                       controller: _emailController,
                       label: l10n.email,
+                      icon: Icons.email_outlined,
                       theme: theme,
                       isEmail: true,
+                      enabled: !isLoading,
                     ),
                     const SizedBox(height: 48),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.primary,
-                          foregroundColor: theme.colorScheme.onPrimary,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(vertical: 18),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        onPressed: state.isLoading
+                        onPressed: isLoading
                             ? null
                             : () {
                                 context.read<ProfileCubit>().updateProfile(
@@ -217,30 +219,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   photoUrl: photoUrl,
                                 );
                               },
-                        child: state.isLoading
+                        child: isLoading
                             ? const SizedBox(
                                 height: 24,
                                 width: 24,
                                 child: CircularProgressIndicator(
-                                  strokeWidth: 2,
+                                  strokeWidth: 2.5,
                                   color: Colors.white,
                                 ),
                               )
-                            : Text(
-                                l10n.saveChanges,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
+                            : Text(l10n.saveChanges),
                       ),
                     ),
                     const SizedBox(height: 32),
                   ],
                 ),
               ),
-              if (state.isLoading)
-                Container(color: Colors.white.withOpacity(0.6)),
+              if (isLoading)
+                Positioned.fill(
+                  child: Container(
+                    color: theme.scaffoldBackgroundColor.withOpacity(0.5),
+                  ),
+                ),
             ],
           ),
         );
@@ -251,43 +251,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
+    required IconData icon,
     required ThemeData theme,
     bool isEmail = false,
+    bool enabled = true,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: theme.textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        Text(label, style: theme.textTheme.titleSmall),
         const SizedBox(height: 8),
         TextField(
           controller: controller,
+          enabled: enabled,
           keyboardType: isEmail
               ? TextInputType.emailAddress
               : TextInputType.text,
           decoration: InputDecoration(
-            hintText: "Enter your $label",
-            hintStyle: TextStyle(color: Colors.grey.shade400),
-            filled: true,
-            fillColor: Colors.grey.shade50,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 18,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.grey.shade200),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(
-                color: theme.colorScheme.primary,
-                width: 2,
-              ),
+            hintText: label,
+            prefixIcon: Icon(
+              icon,
+              color: theme.colorScheme.onSurface.withOpacity(0.4),
             ),
           ),
         ),

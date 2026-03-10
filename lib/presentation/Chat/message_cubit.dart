@@ -18,9 +18,9 @@ class MessageCubit extends Cubit<List<MessageEntity>> {
     });
   }
 
-  Future<void> sendMessage(String roomId, String content) async {
+  Future<void> sendMessage(String roomId, String content, {String? replyTo}) async {
     if (content.trim().isEmpty) return;
 
-    await sendMessageUseCase(roomId, content);
+    await sendMessageUseCase(roomId, content, replyTo: replyTo);
   }
 }

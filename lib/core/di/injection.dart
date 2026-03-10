@@ -22,6 +22,7 @@ import '../../data/datasources/firebase_auth_datasource.dart';
 import '../../data/datasources/user_firestore_datasource.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../domain/usecases/getChatRoom_usecase.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/register_usecase.dart';
 
@@ -75,6 +76,7 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton(() => ResetUnreadUseCase(sl()));
+  sl.registerLazySingleton(() => GetUserChatRoomsUseCase(sl()));
   sl.registerLazySingleton(() => SendMessageUseCase(sl(), sl()));
   sl.registerLazySingleton(() => GetMessagesUseCase(sl()));
   sl.registerFactory(() => MarkMessagesSeenUseCase(sl()));
@@ -91,7 +93,7 @@ Future<void> init() async {
   );
 
   /// ChatListCubit
-  sl.registerFactory(() => ChatCubit(sl()));
+  sl.registerFactory(() => ChatCubit(sl(), sl(), sl()));
 
   /// ChatRoomCubit
   sl.registerFactory(() => ChatRoomCubit(sl(), sl(), sl()));

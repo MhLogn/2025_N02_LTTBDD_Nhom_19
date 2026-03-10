@@ -99,5 +99,8 @@
    "groupMembers": "Group Members",
    "fullName": "Full Name",
    "studentId": "Student ID",
-   "or": "Or"
+   "or": "Or",
+   "today": "Today",
+   "yesterday": "Yesterday",
+   "replyto": "Reply"
 }

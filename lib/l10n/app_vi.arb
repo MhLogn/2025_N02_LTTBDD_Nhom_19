@@ -98,5 +98,8 @@
     "groupMembers": "Thành viên nhóm",
     "fullName": "Họ và tên",
     "studentId": "MSSV",
-    "or": "Hoặc"
+    "or": "Hoặc",
+    "today": "Hôm nay",
+    "yesterday": "Hôm qua",
+    "replyto": "Trả lời"
 }
