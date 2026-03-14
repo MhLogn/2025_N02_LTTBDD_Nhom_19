@@ -35,7 +35,7 @@ class SettingsScreen extends StatelessWidget {
               _showLanguageDialog(context, localeCubit, l10n, theme);
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _buildSettingTile(
             context: context,
             theme: theme,
@@ -49,7 +49,29 @@ class SettingsScreen extends StatelessWidget {
               );
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
+          _buildSettingTile(
+            context: context,
+            theme: theme,
+            icon: Icons.security_rounded,
+            iconColor: Colors.green,
+            title: "Chính sách và bảo mật",
+            onTap: () {
+              _showComingSoonMessage(context);
+            },
+          ),
+          const SizedBox(height: 12),
+          _buildSettingTile(
+            context: context,
+            theme: theme,
+            icon: Icons.support_agent_rounded,
+            iconColor: Colors.blueAccent,
+            title: "Hỗ trợ người dùng",
+            onTap: () {
+              _showComingSoonMessage(context);
+            },
+          ),
+          const SizedBox(height: 12),
           _buildSettingTile(
             context: context,
             theme: theme,
@@ -68,6 +90,25 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  void _showComingSoonMessage(BuildContext context) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: const Text(
+            "Tính năng đang phát triển",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+          ),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          backgroundColor: Colors.black87,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+  }
+
   Widget _buildSettingTile({
     required BuildContext context,
     required ThemeData theme,
@@ -81,11 +122,11 @@ class SettingsScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: theme.colorScheme.onSurface.withOpacity(0.04),
-            blurRadius: 16,
+            blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],
@@ -96,16 +137,16 @@ class SettingsScreen extends StatelessWidget {
       ),
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         child: InkWell(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: iconColor == theme.colorScheme.secondary
                         ? theme.colorScheme.primary.withOpacity(0.1)
@@ -117,15 +158,16 @@ class SettingsScreen extends StatelessWidget {
                     color: iconColor == theme.colorScheme.secondary
                         ? theme.colorScheme.primary
                         : iconColor,
-                    size: 24,
+                    size: 20,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     title,
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: textColor ?? theme.colorScheme.onSurface,
+                      fontSize: 15,
                     ),
                   ),
                 ),
@@ -133,7 +175,7 @@ class SettingsScreen extends StatelessWidget {
                   Icon(
                     Icons.arrow_forward_ios_rounded,
                     color: theme.colorScheme.onSurface.withOpacity(0.3),
-                    size: 18,
+                    size: 16,
                   ),
               ],
             ),
