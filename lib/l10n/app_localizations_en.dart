@@ -282,4 +282,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get replyto => 'Reply';
+
+  @override
+  String get policiesAndPrivacy => 'Policies and Privacy';
+
+  @override
+  String get spUser => 'Support User';
 }

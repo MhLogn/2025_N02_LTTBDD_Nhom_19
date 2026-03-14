@@ -102,5 +102,7 @@
    "or": "Or",
    "today": "Today",
    "yesterday": "Yesterday",
-   "replyto": "Reply"
+   "replyto": "Reply",
+   "policiesAndPrivacy":"Policies and Privacy",
+   "spUser": "Support User"
 }

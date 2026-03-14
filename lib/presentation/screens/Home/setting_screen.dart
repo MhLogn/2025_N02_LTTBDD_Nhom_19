@@ -55,7 +55,7 @@ class SettingsScreen extends StatelessWidget {
             theme: theme,
             icon: Icons.security_rounded,
             iconColor: Colors.green,
-            title: "Chính sách và bảo mật",
+            title: l10n.policiesAndPrivacy,
             onTap: () {
               _showComingSoonMessage(context);
             },
@@ -66,7 +66,7 @@ class SettingsScreen extends StatelessWidget {
             theme: theme,
             icon: Icons.support_agent_rounded,
             iconColor: Colors.blueAccent,
-            title: "Hỗ trợ người dùng",
+            title: l10n.spUser,
             onTap: () {
               _showComingSoonMessage(context);
             },

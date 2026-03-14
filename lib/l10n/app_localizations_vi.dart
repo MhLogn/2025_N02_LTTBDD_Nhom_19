@@ -280,4 +280,10 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get replyto => 'Trả lời';
+
+  @override
+  String get policiesAndPrivacy => 'Chính sách và bảo mật';
+
+  @override
+  String get spUser => 'Hỗ trợ người dùng';
 }

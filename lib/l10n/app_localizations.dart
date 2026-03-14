@@ -619,6 +619,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reply'**
   String get replyto;
+
+  /// No description provided for @policiesAndPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Policies and Privacy'**
+  String get policiesAndPrivacy;
+
+  /// No description provided for @spUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Support User'**
+  String get spUser;
 }
 
 class _AppLocalizationsDelegate
